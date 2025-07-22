@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/analytics", label: "Analytics & Rankings" },
-  { href: "/trends", label: "Profile" },
+  { href: "/profile", label: "Profile" },
 ];
 
 export default function Navigation() {
