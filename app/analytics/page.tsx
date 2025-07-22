@@ -36,11 +36,11 @@ const universityData = [
 ];
 
 const starDistribution = [
-  { name: "5 Stars", value: 88, percentage: 7.0, color: "#FFD700" },
-  { name: "4 Stars", value: 358, percentage: 28.6, color: "#FFA500" },
-  { name: "3 Stars", value: 512, percentage: 41.0, color: "#FF6347" },
-  { name: "2 Stars", value: 234, percentage: 18.7, color: "#FF4500" },
-  { name: "1 Star", value: 58, percentage: 4.7, color: "#DC143C" }
+  { name: "5 Stars", value: 88, percentage: 7.0, color: "#FFFFFF" },
+  { name: "4 Stars", value: 358, percentage: 28.6, color: "#D1D5DB" },
+  { name: "3 Stars", value: 512, percentage: 41.0, color: "#9CA3AF" },
+  { name: "2 Stars", value: 234, percentage: 18.7, color: "#6B7280" },
+  { name: "1 Star", value: 58, percentage: 4.7, color: "#374151" }
 ];
 
 const yearWiseData = [
@@ -62,7 +62,7 @@ export default function AnalyticsPage() {
 
         {/* Tabs */}
         <div className="flex space-x-1 mb-8 border-b border-gray-800">
-          <Button variant="ghost" className="bg-purple-600 text-white hover:bg-purple-700 border-b-2 border-purple-600">
+          <Button variant="ghost" className="bg-white text-black hover:bg-gray-200 border-b-2 border-white">
             Global Rankings
           </Button>
           <Button variant="ghost" className="text-gray-300 hover:text-white hover:bg-gray-800">
@@ -85,7 +85,7 @@ export default function AnalyticsPage() {
                       {performer.name.split(' ').map(n => n[0]).join('')}
                     </span>
                   </div>
-                  <div className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full">
+                  <div className="absolute -top-2 -right-2 bg-white text-black text-xs font-bold px-2 py-1 rounded-full">
                     #{performer.rank}
                   </div>
                 </div>
@@ -97,7 +97,7 @@ export default function AnalyticsPage() {
                     <Star
                       key={star}
                       className={`h-4 w-4 ${
-                        star <= performer.stars ? "fill-yellow-400 text-yellow-400" : "text-gray-600"
+                        star <= performer.stars ? "fill-white text-white" : "text-gray-600"
                       }`}
                     />
                   ))}
@@ -140,7 +140,7 @@ export default function AnalyticsPage() {
               <SelectItem value="caltech">Caltech</SelectItem>
             </SelectContent>
           </Select>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+          <Button className="bg-white hover:bg-gray-200 text-black">
             <Download className="h-4 w-4 mr-2" />
             Export CSV
           </Button>
@@ -179,7 +179,7 @@ export default function AnalyticsPage() {
                           <Star
                             key={star}
                             className={`h-3 w-3 ${
-                              star <= student.stars ? "fill-yellow-400 text-yellow-400" : "text-gray-600"
+                              star <= student.stars ? "fill-white text-white" : "text-gray-600"
                             }`}
                           />
                         ))}
@@ -187,8 +187,8 @@ export default function AnalyticsPage() {
                     </td>
                     <td className="p-4">
                       <TrendingUp className={`h-4 w-4 ${
-                        student.trend === 'up' ? 'text-green-400' : 
-                        student.trend === 'down' ? 'text-red-400' : 'text-gray-400'
+                        student.trend === 'up' ? 'text-white' : 
+                        student.trend === 'down' ? 'text-gray-500' : 'text-gray-400'
                       }`} />
                     </td>
                   </tr>
@@ -200,7 +200,7 @@ export default function AnalyticsPage() {
             <span>Showing 1 to 10 of 1,250 results</span>
             <div className="flex space-x-2">
               <Button variant="ghost" size="sm" className="text-gray-300">Previous</Button>
-              <Button variant="ghost" size="sm" className="bg-purple-600 text-white">1</Button>
+              <Button variant="ghost" size="sm" className="bg-white text-black">1</Button>
               <Button variant="ghost" size="sm" className="text-gray-300">2</Button>
               <Button variant="ghost" size="sm" className="text-gray-300">3</Button>
               <Button variant="ghost" size="sm" className="text-gray-300">Next</Button>
@@ -225,7 +225,7 @@ export default function AnalyticsPage() {
                     color: '#FFFFFF'
                   }} 
                 />
-                <Bar dataKey="avgScore" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="avgScore" fill="#FFFFFF" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Card>
@@ -283,11 +283,11 @@ export default function AnalyticsPage() {
                 <div className="text-sm text-gray-300 mb-3">Average Score</div>
                 <div className="w-full bg-gray-800 rounded-full h-2 mb-2">
                   <div 
-                    className="bg-purple-600 h-2 rounded-full transition-all duration-500" 
+                    className="bg-white h-2 rounded-full transition-all duration-500" 
                     style={{ width: `${(year.avgScore / 1000) * 100}%` }}
                   ></div>
                 </div>
-                <div className="text-sm text-green-400">{year.change} from previous year</div>
+                <div className="text-sm text-white">{year.change} from previous year</div>
               </div>
             ))}
           </div>

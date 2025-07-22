@@ -32,35 +32,35 @@ const correlationAnalysis = [
     description: "Strong positive correlation with ranking",
     correlation: 0.78,
     strength: "Very Strong",
-    color: "text-yellow-400"
+    color: "text-white"
   },
   {
     title: "Society Participation",
     description: "Moderate positive correlation with experience score",
     correlation: 0.65,
     strength: "Moderate",
-    color: "text-orange-400"
+    color: "text-gray-300"
   },
   {
     title: "Academic Score",
     description: "Very strong correlation with final ranking",
     correlation: 0.82,
     strength: "Very Strong",
-    color: "text-green-400"
+    color: "text-white"
   },
   {
     title: "Project Count",
     description: "Strong correlation with composite score",
     correlation: 0.71,
     strength: "Strong",
-    color: "text-yellow-400"
+    color: "text-white"
   },
   {
     title: "Certification Count",
     description: "Moderate correlation with academic score",
     correlation: 0.58,
     strength: "Moderate",
-    color: "text-red-400"
+    color: "text-gray-300"
   }
 ];
 
@@ -69,29 +69,29 @@ const keyInsights = [
     icon: Users,
     title: "Students with 2+ internships rank 35% higher",
     description: "Multiple internship experiences significantly boost overall rankings",
-    color: "bg-purple-900/30",
-    iconColor: "text-purple-400"
+    color: "bg-gray-800/50",
+    iconColor: "text-white"
   },
   {
     icon: TrendingUp,
     title: "Y2 students show highest score improvement",
     description: "Second-year students demonstrate the strongest learning curve",
-    color: "bg-green-900/30",
-    iconColor: "text-green-400"
+    color: "bg-gray-800/50",
+    iconColor: "text-white"
   },
   {
     icon: Award,
     title: "Society leadership roles add 25+ points",
     description: "Leadership positions in societies provide substantial score boosts",
-    color: "bg-purple-900/30",
-    iconColor: "text-purple-400"
+    color: "bg-gray-800/50",
+    iconColor: "text-white"
   },
   {
     icon: GraduationCap,
     title: "Technical certifications correlate with top 10%",
     description: "Students in top rankings typically have 3+ technical certifications",
-    color: "bg-yellow-900/30",
-    iconColor: "text-yellow-400"
+    color: "bg-gray-800/50",
+    iconColor: "text-white"
   }
 ];
 
@@ -113,7 +113,7 @@ export default function TrendsPage() {
           <Button variant="ghost" className="text-gray-300 hover:text-white hover:bg-gray-800">
             Comparative Insights
           </Button>
-          <Button variant="ghost" className="bg-purple-600 text-white hover:bg-purple-700 border-b-2 border-purple-600">
+          <Button variant="ghost" className="bg-white text-black hover:bg-gray-200 border-b-2 border-white">
             Trends
           </Button>
         </div>
@@ -134,22 +134,22 @@ export default function TrendsPage() {
                   color: '#FFFFFF'
                 }} 
               />
-              <Line type="monotone" dataKey="MIT" stroke="#3B82F6" strokeWidth={3} dot={{ fill: '#3B82F6', r: 6 }} />
-              <Line type="monotone" dataKey="Stanford" stroke="#10B981" strokeWidth={3} dot={{ fill: '#10B981', r: 6 }} />
-              <Line type="monotone" dataKey="Harvard" stroke="#F59E0B" strokeWidth={3} dot={{ fill: '#F59E0B', r: 6 }} />
-              <Line type="monotone" dataKey="Caltech" stroke="#EF4444" strokeWidth={3} dot={{ fill: '#EF4444', r: 6 }} />
-              <Line type="monotone" dataKey="Princeton" stroke="#8B5CF6" strokeWidth={3} dot={{ fill: '#8B5CF6', r: 6 }} />
+              <Line type="monotone" dataKey="MIT" stroke="#FFFFFF" strokeWidth={3} dot={{ fill: '#FFFFFF', r: 6 }} />
+              <Line type="monotone" dataKey="Stanford" stroke="#D1D5DB" strokeWidth={3} dot={{ fill: '#D1D5DB', r: 6 }} />
+              <Line type="monotone" dataKey="Harvard" stroke="#9CA3AF" strokeWidth={3} dot={{ fill: '#9CA3AF', r: 6 }} />
+              <Line type="monotone" dataKey="Caltech" stroke="#6B7280" strokeWidth={3} dot={{ fill: '#6B7280', r: 6 }} />
+              <Line type="monotone" dataKey="Princeton" stroke="#374151" strokeWidth={3} dot={{ fill: '#374151', r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
           
           {/* Legend */}
           <div className="flex flex-wrap justify-center gap-6 mt-4">
             {[
-              { name: "MIT", color: "#3B82F6" },
-              { name: "Stanford", color: "#10B981" },
-              { name: "Harvard", color: "#F59E0B" },
-              { name: "Caltech", color: "#EF4444" },
-              { name: "Princeton", color: "#8B5CF6" }
+              { name: "MIT", color: "#FFFFFF" },
+              { name: "Stanford", color: "#D1D5DB" },
+              { name: "Harvard", color: "#9CA3AF" },
+              { name: "Caltech", color: "#6B7280" },
+              { name: "Princeton", color: "#374151" }
             ].map((university) => (
               <div key={university.name} className="flex items-center space-x-2">
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: university.color }}></div>
@@ -180,7 +180,7 @@ export default function TrendsPage() {
                       color: '#FFFFFF'
                     }} 
                   />
-                  <Scatter dataKey="ranking" fill="#8B5CF6" />
+                  <Scatter dataKey="ranking" fill="#FFFFFF" />
                 </ScatterChart>
               </ResponsiveContainer>
             </div>
@@ -202,7 +202,7 @@ export default function TrendsPage() {
                       </div>
                       <div className="w-16 bg-gray-800 rounded-full h-2">
                         <div 
-                          className="bg-purple-600 h-2 rounded-full transition-all duration-500" 
+                          className="bg-white h-2 rounded-full transition-all duration-500" 
                           style={{ width: `${item.correlation * 100}%` }}
                         ></div>
                       </div>
