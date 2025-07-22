@@ -1,9 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Bell, User } from "lucide-react";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Bell, User, Settings, LogOut, ChevronDown } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
@@ -14,8 +22,10 @@ const navItems = [
 
 export default function Navigation() {
   const pathname = usePathname();
-  const [user, setUser] = useState<any>(null);
-  
+  const router = useRouter();
+  const [user, setUser] = useState<{ email?: string; user_metadata?: { name?: string } } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     const getUser = async () => {
       const supabase = createClient();
@@ -24,7 +34,36 @@ export default function Navigation() {
     };
     getUser();
   }, []);
-  
+
+  const handleSignOut = async () => {
+    setIsLoading(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Sign out error:', error);
+      } else {
+        router.push('/auth/login');
+      }
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditProfile = () => {
+    router.push('/profile');
+  };
+
+  const getUserDisplayName = () => {
+    return user?.email?.split('@')[0] || user?.user_metadata?.name || 'User';
+  };
+
+  const getUserEmail = () => {
+    return user?.email || 'user@example.com';
+  };
+
   return (
     <nav className="bg-gradient-to-r from-black via-gray-900 to-black border-b border-gray-800 px-6 py-4 shadow-lg">
       <div className="flex items-center justify-between">
@@ -37,15 +76,15 @@ export default function Navigation() {
             </div>
             <span className="text-xl font-semibold text-white">StudentRank</span>
           </div>
-          
+
           {/* Navigation Items */}
           <div className="flex space-x-1">
             {navItems.map((item) => (
               <Link key={item.href} href={item.href}>
-                <Button 
+                <Button
                   variant="ghost"
-                  className={pathname === item.href 
-                    ? "bg-gradient-to-r from-white to-gray-200 text-black hover:from-gray-100 hover:to-gray-300 shadow-md" 
+                  className={pathname === item.href
+                    ? "bg-gradient-to-r from-white to-gray-200 text-black hover:from-gray-100 hover:to-gray-300 shadow-md"
                     : "text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-300"
                   }
                 >
@@ -62,14 +101,57 @@ export default function Navigation() {
             <Bell className="h-5 w-5" />
           </Button>
           
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center shadow-md">
-              <User className="h-4 w-4 text-white" />
-            </div>
-            <span className="text-sm font-medium text-gray-300">
-              {user?.email?.split('@')[0] || user?.user_metadata?.name || 'User'}
-            </span>
-          </div>
+          {/* User Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className="flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-300 h-auto px-3 py-2"
+              >
+                <div className="w-8 h-8 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center shadow-md">
+                  <User className="h-4 w-4 text-white" />
+                </div>
+                <div className="flex flex-col items-start">
+                  <span className="text-sm font-medium text-gray-300">
+                    {getUserDisplayName()}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {getUserEmail()}
+                  </span>
+                </div>
+                <ChevronDown className="h-4 w-4 text-gray-400" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              className="w-56 bg-gray-900 border-gray-700 shadow-xl" 
+              align="end"
+              sideOffset={5}
+            >
+              <DropdownMenuLabel className="text-gray-300">
+                My Account
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-gray-700" />
+              
+              <DropdownMenuItem 
+                onClick={handleEditProfile}
+                className="flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-gray-800 cursor-pointer transition-colors"
+              >
+                <Settings className="h-4 w-4" />
+                <span>Edit Profile</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator className="bg-gray-700" />
+              
+              <DropdownMenuItem 
+                onClick={handleSignOut}
+                disabled={isLoading}
+                className="flex items-center space-x-2 text-red-400 hover:text-red-300 hover:bg-gray-800 cursor-pointer transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>{isLoading ? 'Signing out...' : 'Sign Out'}</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </nav>

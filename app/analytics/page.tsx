@@ -27,15 +27,6 @@ const rankingsData = [
   { rank: 10, name: "Robert Lee", university: "Stanford", year: "Y2", academic: 84, experience: 81, composite: 825, stars: 4, trend: "same" }
 ];
 
-const universityData = [
-  { name: "MIT", students: 245, avgScore: 847 },
-  { name: "Stanford", students: 198, avgScore: 832 },
-  { name: "Harvard", students: 167, avgScore: 825 },
-  { name: "Caltech", students: 134, avgScore: 815 },
-  { name: "Princeton", students: 156, avgScore: 798 },
-  { name: "Yale", students: 143, avgScore: 785 }
-];
-
 const starDistribution = [
   { name: "5 Stars", value: 88, percentage: 7.0, color: "#FFFFFF" },
   { name: "4 Stars", value: 358, percentage: 28.6, color: "#D1D5DB" },
@@ -100,7 +91,7 @@ export default function AnalyticsPage() {
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-white mb-4">Top Performers</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {topPerformers.map((performer, index) => (
+          {topPerformers.map((performer) => (
             <Card key={performer.id} className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 text-center shadow-xl">
               <div className="relative mb-4">
                 <div className="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center">

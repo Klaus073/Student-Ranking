@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { User, BookOpen, Briefcase, Award, Plus, X, Save, Camera } from "lucide-react";
+import { User, BookOpen, Briefcase, Plus, X, Save, Camera } from "lucide-react";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("personal");
