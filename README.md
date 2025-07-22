@@ -1,105 +1,182 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# 🎓 StudentRank - Academic Performance Ranking System
 
 <p align="center">
- The fastest way to build apps with Next.js and Supabase
+  <img src="https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js" alt="Next.js">
+  <img src="https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Supabase-Auth-green?style=for-the-badge&logo=supabase" alt="Supabase">
+  <img src="https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS">
+  <img src="https://img.shields.io/badge/shadcn/ui-Components-000000?style=for-the-badge" alt="shadcn/ui">
 </p>
 
 <p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
+  A comprehensive student ranking platform that tracks academic performance, internships, society participation, and provides real-time leaderboards and analytics.
 </p>
-<br/>
 
-## Features
+## ✨ Features
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+### 🏆 Dashboard
+- **Real-time Ranking**: Live position tracking with rank progression indicators
+- **Score Breakdown**: Academic vs Experience score visualization with circular progress indicators
+- **Composite Scoring**: Weighted scoring system (60% Academic, 40% Experience)
+- **Star Rating System**: 5-star performance rating based on composite scores
+- **Recent Activity Feed**: Timeline of achievements and point changes
+- **Quick Actions**: Fast access to update academic records, internships, and society activities
 
-## Demo
+### 📊 Analytics & Rankings
+- **Global Leaderboard**: Sortable table with comprehensive user rankings
+- **Advanced Filtering**: Filter by year level (Y0-Y3), university, and search by username
+- **Comparative Insights**: University performance comparisons and score distributions
+- **Interactive Charts**: Score breakdown visualizations and trend analysis
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+### 📈 Trends & Insights
+- **Performance Trends**: Historical performance tracking by university
+- **Correlation Analysis**: Scatter plots showing experience vs ranking relationships
+- **Year-wise Analytics**: Performance breakdown by academic year
+- **University Rankings**: Top performing institutions by average composite score
 
-## Deploy to Vercel
+### 🔐 Authentication & Security
+- **Supabase Authentication**: Secure email/password authentication
+- **Session Management**: Persistent login sessions with automatic redirects
+- **Protected Routes**: Secure access to dashboard and analytics
+- **Real-time User Data**: Dynamic user information display
 
-Vercel deployment will guide you through creating a Supabase account and project.
+### 🎨 Design & UX
+- **Modern Dark Theme**: Sleek black and white design with smooth gradients
+- **Responsive Layout**: Mobile-first design that works on all devices
+- **Smooth Animations**: 300ms transitions and hover effects throughout
+- **Professional UI**: Clean, minimalist interface with excellent contrast ratios
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+## 🛠️ Technology Stack
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+- **Frontend**: Next.js 14 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Components**: shadcn/ui
+- **Authentication**: Supabase Auth
+- **Database**: Supabase (PostgreSQL)
+- **Charts**: Recharts (planned)
+- **Deployment**: Vercel-ready
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+## 📋 Data Structure
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+### User Profile Management
+- **Personal Information**: Name, email, university, current year
+- **Academic Records**: A-Levels, GCSEs, grades, awards, certifications
+- **Experience Tracking**: Internships (tier, duration, years), society roles
+- **Bank Internship Tiers**: Bulge Bracket, Elite Boutique, Middle Market, Regional
+- **Industry Exposure**: From shadowing to full placements
 
-## Clone and run locally
+### Scoring Algorithm
+- **Academic Score (60%)**: Based on grades, awards, and certifications
+- **Experience Score (40%)**: Calculated from internships, societies, and exposure
+- **Composite Score**: Weighted combination with real-time updates
+- **Star Rating**: 1-5 stars based on composite performance thresholds
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+## 🚀 Getting Started
 
-2. Create a Next.js app using the Supabase Starter template npx command
+### Prerequisites
+- Node.js 18+ 
+- npm/yarn/pnpm
+- Supabase account
 
+### Installation
+
+1. **Clone the repository**
    ```bash
-   npx create-next-app --example with-supabase with-supabase-app
+   git clone https://github.com/Klaus073/Student-Ranking.git
+   cd Student-Ranking
    ```
 
+2. **Install dependencies**
    ```bash
-   yarn create next-app --example with-supabase with-supabase-app
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
    ```
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
+3. **Set up Supabase**
+   - Create a new project at [supabase.com](https://supabase.com)
+   - Copy your project URL and anon key
+
+4. **Environment Variables**
+   Create a `.env.local` file:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
    ```
 
-3. Use `cd` to change into the app's directory
-
-   ```bash
-   cd with-supabase-app
+5. **Database Setup**
+   Run the SQL migrations in your Supabase dashboard:
+   ```sql
+   -- Create tables for profiles, internships, society_roles, universities
+   -- (Full schema available in docs)
    ```
 
-4. Rename `.env.example` to `.env.local` and update the following:
-
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
-
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
-
-5. You can now run the Next.js local development server:
-
+6. **Run the development server**
    ```bash
    npm run dev
    ```
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+7. **Open [http://localhost:3000](http://localhost:3000)**
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+## 📁 Project Structure
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+```
+├── app/
+│   ├── (auth)/                 # Authentication pages
+│   ├── dashboard/              # Main dashboard components
+│   ├── analytics/              # Rankings and analytics
+│   ├── trends/                 # Trends and insights
+│   ├── api/                    # API routes
+│   └── _components/            # Shared components
+├── components/
+│   ├── ui/                     # shadcn/ui components
+│   └── auth/                   # Authentication components
+├── lib/
+│   ├── supabase/               # Supabase configuration
+│   ├── cfg.ts                  # Configuration constants
+│   ├── types.ts                # TypeScript definitions
+│   └── scoreUtils.ts           # Score calculation logic
+```
 
-## Feedback and issues
+## 🎯 Roadmap
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+- [ ] Complete Analytics page implementation
+- [ ] Add Trends page with interactive charts
+- [ ] Implement real database integration
+- [ ] Add profile editing functionality
+- [ ] Create admin dashboard
+- [ ] Add export functionality for rankings
+- [ ] Implement notification system
+- [ ] Add mobile app support
 
-## More Supabase examples
+## 🤝 Contributing
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+
+**Klaus073**
+- GitHub: [@Klaus073](https://github.com/Klaus073)
+- Email: nomirao1254@gmail.com
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org) for the amazing React framework
+- [Supabase](https://supabase.com) for backend and authentication
+- [shadcn/ui](https://ui.shadcn.com) for beautiful components
+- [Tailwind CSS](https://tailwindcss.com) for utility-first styling
+
+---
+
+<p align="center">Made with ❤️ for student success</p>
