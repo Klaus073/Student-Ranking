@@ -6,37 +6,58 @@ export type University = {
 };
 
 export type Profile = {
-  id: string;
-  name: string;
-  email: string;
-  university_id: string;
-  year: 0 | 1 | 2 | 3;
-  alevels: string[];
-  gcses: string[];
-  grade_y2?: string;
-  grade_y3?: string;
+  user_id: string;
+  full_name: string;
+  current_year: 0 | 1 | 2 | 3;
+  university: string;
+  grades?: string;
+  bank_internship_tier?: string;
+  industry_exposure?: string;
+  months_of_experience: number;
   awards: number;
   certifications: number;
-  bank_tier: string;
-  exposure: string;
-  months_experience: number;
+  created_at: string;
   updated_at: string;
+};
+
+export type StudentALevel = {
+  id: string;
+  user_id: string;
+  subject: string;
+  created_at: string;
+};
+
+export type StudentGCSE = {
+  id: string;
+  user_id: string;
+  subject: string;
+  created_at: string;
 };
 
 export type Internship = {
   id: string;
-  profile_id: string;
+  user_id: string;
   tier: string;
   months: number;
-  years: number;
+  year: number;
+  created_at: string;
 };
 
 export type SocietyRole = {
   id: string;
-  profile_id: string;
-  role: string;
-  size: string;
-  years: number;
+  user_id: string;
+  role_title: string;
+  society_size: string;
+  years_active: number;
+  created_at: string;
+};
+
+export type UserProfile = {
+  profile: Profile | null;
+  alevels: StudentALevel[];
+  gcses: StudentGCSE[];
+  internships: Internship[];
+  societyRoles: SocietyRole[];
 };
 
 export type Ranking = {

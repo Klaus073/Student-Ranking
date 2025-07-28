@@ -23,6 +23,11 @@ const navItems = [
 export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
+
+  // Hide navigation on authentication pages (/auth/*)
+  if (pathname.startsWith("/auth")) {
+    return null;
+  }
   const [user, setUser] = useState<{ email?: string; user_metadata?: { name?: string } } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
