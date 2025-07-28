@@ -104,7 +104,10 @@ export default function TestSignupPage() {
       try {
         const { data: basicData, error: basicError } = await supabase.auth.signUp({
           email: `basic-${timestamp}@gmail.com`, // Use timestamp for other tests to avoid conflicts
-          password: 'testpassword123'
+          password: 'testpassword123',
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/confirm?next=/dashboard`,
+          }
         });
         
         if (basicError) {
@@ -125,6 +128,7 @@ export default function TestSignupPage() {
           email: `minimal-${timestamp}@gmail.com`, // Use timestamp for other tests to avoid conflicts
           password: 'testpassword123',
           options: {
+            emailRedirectTo: `${window.location.origin}/auth/confirm?next=/dashboard`,
             data: {
               full_name: 'Test User'
             }
@@ -148,6 +152,7 @@ export default function TestSignupPage() {
         email: testEmail, // Your specific email
         password: 'testpassword123',
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/confirm?next=/dashboard`,
           data: {
             full_name: 'Jack Min',
             university: 'Test University',
@@ -458,6 +463,7 @@ export default function TestSignupPage() {
         email: testEmail,
         password: 'testpassword123',
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/confirm?next=/dashboard`,
           data: {
             full_name: 'Cascade Test User',
             university: 'Test University',
