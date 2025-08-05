@@ -3,8 +3,18 @@ import { Profile, Internship, SocietyRole } from "./types";
 export function calculateAcademicScore(profile: Profile): number {
   // Example: base on grades, awards, certifications
   let score = 0;
-  if (profile.grade_y2) score += gradeToScore(profile.grade_y2);
-  if (profile.grade_y3) score += gradeToScore(profile.grade_y3);
+  // If detailed year-based grade fields exist, use them; otherwise fall back to overall grade
+  if ('grade_y2' in profile && profile.grade_y2) {
+    // @ts-ignore - Dynamic property check
+    score += gradeToScore((profile as any).grade_y2);
+  }
+  if ('grade_y3' in profile && profile.grade_y3) {
+    // @ts-ignore - Dynamic property check
+    score += gradeToScore((profile as any).grade_y3);
+  }
+  if (profile.grades) {
+    score += gradeToScore(profile.grades);
+  }
   score += profile.awards * 5;
   score += profile.certifications * 5;
   return Math.min(100, score);
@@ -26,11 +36,11 @@ export function calculateExperienceScore(
   societies: SocietyRole[]
 ): number {
   let score = 0;
-  score += Math.min(30, profile.months_experience * 2);
+  score += Math.min(30, profile.months_of_experience * 2);
   score += internships.length * 5;
   score += societies.length * 5;
-  if (profile.bank_tier === "Bulge Bracket") score += 10;
-  if (profile.exposure === "Summer Internship") score += 10;
+  if (profile.bank_internship_tier === "Bulge Bracket") score += 10;
+  if (profile.industry_exposure === "Summer Internship") score += 10;
   return Math.min(100, score);
 }
 

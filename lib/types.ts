@@ -11,6 +11,8 @@ export type Profile = {
   current_year: 0 | 1 | 2 | 3;
   university: string;
   grades?: string;
+  grade_y2?: string;
+  grade_y3?: string;
   bank_internship_tier?: string;
   industry_exposure?: string;
   months_of_experience: number;

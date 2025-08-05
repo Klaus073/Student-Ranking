@@ -1,12 +1,13 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, ArrowLeft, Mail, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
-export default function ErrorPage() {
+function ErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
 
@@ -144,5 +145,24 @@ export default function ErrorPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function ErrorPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50">
+        <div className="w-full max-w-2xl">
+          <Card className="border-gray-200 shadow-lg">
+            <CardContent className="p-8 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading...</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    }>
+      <ErrorContent />
+    </Suspense>
   );
 }
