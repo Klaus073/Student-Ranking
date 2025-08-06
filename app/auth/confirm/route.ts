@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { type EmailOtpType, type User } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
-import { type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 interface InternshipMetadata {
@@ -18,7 +18,10 @@ interface SocietyRoleMetadata {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+  
+  // Handle both new and old Supabase auth formats
   const token_hash = searchParams.get("token_hash");
+  const code = searchParams.get("code");
   const type = searchParams.get("type") as EmailOtpType | null;
   const next = searchParams.get("next") ?? "/";
 
@@ -31,16 +34,20 @@ export async function GET(request: NextRequest) {
     fullUrl,
     type, 
     hasToken: !!token_hash,
+    hasCode: !!code,
     tokenPreview: token_hash ? `${token_hash.substring(0, 8)}...` : 'none',
+    codePreview: code ? `${code.substring(0, 8)}...` : 'none',
     nextUrl: next
   });
 
   // Log to ensure this route is actually being called
   console.log('🌐 CONFIRM ROUTE ACCESSED - Route is working!');
 
-  if (!token_hash || !type) {
-    console.error('❌ MISSING TOKEN/TYPE - redirecting to error');
-    redirect(`/auth/error?error=Invalid confirmation link - missing token or type`);
+  // Check if we have either the new format (code) or old format (token_hash + type)
+  if (!code && (!token_hash || !type)) {
+    console.error('❌ MISSING TOKEN/CODE - redirecting to error');
+    const errorUrl = new URL('/auth/error?error=Invalid confirmation link - missing token, code, or type', request.url);
+    return NextResponse.redirect(errorUrl);
   }
 
   try {
@@ -48,12 +55,25 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
     console.log('✅ Supabase client created successfully');
 
-    // Verify the OTP token
-    console.log('🔍 Starting OTP verification...', { type, tokenLength: token_hash.length });
-    const { data, error } = await supabase.auth.verifyOtp({
-      type,
-      token_hash,
-    });
+    // Verify the OTP token - handle both new and old formats
+    let data, error;
+    
+    if (code) {
+      // New format: use exchangeCodeForSession instead of verifyOtp
+      console.log('🔍 Starting code exchange for session...', { codeLength: code.length });
+      const result = await supabase.auth.exchangeCodeForSession(code);
+      data = result.data;
+      error = result.error;
+    } else {
+      // Old format: use token_hash and type
+      console.log('🔍 Starting OTP verification with token_hash...', { type, tokenLength: token_hash!.length });
+      const result = await supabase.auth.verifyOtp({
+        type: type!,
+        token_hash: token_hash!,
+      });
+      data = result.data;
+      error = result.error;
+    }
     
     if (error) {
       console.error('❌ OTP VERIFICATION FAILED:', {
@@ -61,12 +81,14 @@ export async function GET(request: NextRequest) {
         code: error.status,
         timestamp
       });
-      redirect(`/auth/error?error=OTP verification failed: ${encodeURIComponent(error.message)}`);
+      const errorUrl = new URL(`/auth/error?error=OTP verification failed: ${encodeURIComponent(error.message)}`, request.url);
+      return NextResponse.redirect(errorUrl);
     }
 
     if (!data.user) {
       console.error('❌ NO USER DATA from OTP verification');
-      redirect(`/auth/error?error=No user data returned from verification`);
+      const errorUrl = new URL('/auth/error?error=No user data returned from verification', request.url);
+      return NextResponse.redirect(errorUrl);
     }
 
     console.log('✅ OTP VERIFICATION SUCCESS:', { 
@@ -97,11 +119,24 @@ export async function GET(request: NextRequest) {
         userId: data.user.id,
         timestamp
       });
-      redirect(`/auth/error?error=Profile creation failed: ${encodeURIComponent(profileResult.error || 'Unknown error')}`);
+      const errorUrl = new URL(`/auth/error?error=Profile creation failed: ${encodeURIComponent(profileResult.error || 'Unknown error')}`, request.url);
+      return NextResponse.redirect(errorUrl);
     }
 
     console.log('🎉 COMPLETE SUCCESS - Profile created, redirecting to:', next);
-    redirect(next);
+    
+    // Create a response with proper redirect and ensure cookies are set
+    const redirectUrl = new URL(next, request.url);
+    const response = NextResponse.redirect(redirectUrl);
+    
+    // Copy any session cookies from Supabase client to response
+    const cookieStore = await import('next/headers').then(m => m.cookies());
+    const allCookies = (await cookieStore).getAll();
+    allCookies.forEach(cookie => {
+      response.cookies.set(cookie.name, cookie.value, cookie);
+    });
+    
+    return response;
 
   } catch (error) {
     console.error('💥 UNEXPECTED ERROR in auth confirmation:', {
@@ -109,7 +144,8 @@ export async function GET(request: NextRequest) {
       stack: error instanceof Error ? error.stack : 'No stack',
       timestamp
     });
-    redirect(`/auth/error?error=Authentication failed: ${encodeURIComponent(error instanceof Error ? error.message : 'Unknown error')}`);
+    const errorUrl = new URL(`/auth/error?error=Authentication failed: ${encodeURIComponent(error instanceof Error ? error.message : 'Unknown error')}`, request.url);
+    return NextResponse.redirect(errorUrl);
   }
 }
 
