@@ -46,16 +46,6 @@ jobs:
         key: ${{ secrets.STAGING_EC2_PRIVATE_KEY }}
         port: ${{ secrets.STAGING_EC2_PORT || 22 }}
         script: |
-          # Ensure Docker daemon is configured for insecure registry
-          sudo mkdir -p /etc/docker
-          if [ ! -f /etc/docker/daemon.json ] || ! grep -q "insecure-registries" /etc/docker/daemon.json; then
-            echo '{
-              "insecure-registries": ["localhost:5000"]
-            }' | sudo tee /etc/docker/daemon.json
-            sudo systemctl restart docker
-            sleep 10
-          fi
-          
           # Navigate to the ranking folder
           cd /home/ubuntu/ranking
           
