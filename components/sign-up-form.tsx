@@ -181,7 +181,7 @@ export function SignUpForm({
           // After the user clicks the confirmation link, Supabase will redirect
           // them back to this URL. Our /auth/confirm route handles OTP verification
           // and profile creation, finally redirecting the user onwards (e.g. dashboard).
-          emailRedirectTo: `${window.location.origin}/auth/confirm?next=/dashboard`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/confirm?next=/dashboard`,
           data: signupData,
         },
       });
