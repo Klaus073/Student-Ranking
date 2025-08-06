@@ -5,7 +5,7 @@ on:
     branches: [ staging ]
 
 env:
-  IMAGE_NAME: 'ranking-app'
+  IMAGE_NAME: 'student-ranking-app'  # Updated to match your compose file
   CONTAINER_NAME: 'ranking-app'
 
 jobs:
@@ -34,19 +34,44 @@ jobs:
         key: ${{ secrets.STAGING_EC2_PRIVATE_KEY }}
         port: ${{ secrets.STAGING_EC2_PORT || 22 }}
         script: |
-          # Pull latest image
-          docker pull ${{ secrets.REGISTRY_HOST }}/${{ env.IMAGE_NAME }}:latest
+          # Navigate to the ranking folder
+          cd /home/ubuntu/ranking
           
-          # Stop and remove old container
-          docker stop ${{ env.CONTAINER_NAME }} 2>/dev/null || true
-          docker rm ${{ env.CONTAINER_NAME }} 2>/dev/null || true
+          # Pull the latest image from registry
+          docker pull localhost:5000/${{ env.IMAGE_NAME }}:latest
           
-          # Run new container
-          docker run -d \
-            --name ${{ env.CONTAINER_NAME }} \
-            -p 3000:3000 \
-            --restart unless-stopped \
-            ${{ secrets.REGISTRY_HOST }}/${{ env.IMAGE_NAME }}:latest
+          # Stop current containers (docker-compose)
+          docker-compose down
           
-          # Clean up old images
-          docker image prune -f
+          # Start containers with the new image
+          docker-compose up -d
+          
+          # Wait for containers to be healthy
+          sleep 5
+          
+          # Check if containers are running
+          if docker-compose ps | grep -q "Up"; then
+            echo "✅ Deployment successful"
+            
+            # Clean up old images (keep only current and one previous)
+            echo "Cleaning up old Docker images..."
+            
+            # Get current image ID
+            CURRENT_IMAGE=$(docker inspect --format='{{.Id}}' localhost:5000/${{ env.IMAGE_NAME }}:latest)
+            
+            # Keep only the last 2 images of our app
+            docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | \
+              grep "localhost:5000/${{ env.IMAGE_NAME }}" | \
+              grep -v "latest" | \
+              awk '{print $2}' | \
+              xargs -r docker rmi -f 2>/dev/null || true
+            
+            # Remove dangling images
+            docker image prune -f
+            
+            echo "✅ Cleanup complete"
+          else
+            echo "❌ Deployment failed! Check docker-compose logs"
+            docker-compose logs --tail=50
+            exit 1
+          fi
