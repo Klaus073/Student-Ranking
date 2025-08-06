@@ -105,6 +105,8 @@
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_SITE_URL=http://localhost:3000  # For development
+   # For production: NEXT_PUBLIC_SITE_URL=http://your-ec2-ip:3000
    ```
 
 5. **Database Setup**
