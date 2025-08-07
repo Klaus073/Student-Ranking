@@ -50,40 +50,40 @@ jobs:
           cd /home/ubuntu/ranking
           
           # Pull the latest image from registry
-          docker pull localhost:5000/${{ env.IMAGE_NAME }}:latest
+          sudo docker pull localhost:5000/${{ env.IMAGE_NAME }}:latest
           
-          # Stop current containers (docker-compose)
-          docker-compose down
+          # Stop current containers (docker compose)
+          sudo docker compose down
           
           # Start containers with the new image
-          docker-compose up -d
+          sudo docker compose up -d
           
           # Wait for containers to be healthy
           sleep 5
           
           # Check if containers are running
-          if docker-compose ps | grep -q "Up"; then
+          if sudo docker compose ps | grep -q "Up"; then
             echo "✅ Deployment successful"
             
             # Clean up old images (keep only current and one previous)
             echo "Cleaning up old Docker images..."
             
             # Get current image ID
-            CURRENT_IMAGE=$(docker inspect --format='{{.Id}}' localhost:5000/${{ env.IMAGE_NAME }}:latest)
+            CURRENT_IMAGE=$(sudo docker inspect --format='{{.Id}}' localhost:5000/${{ env.IMAGE_NAME }}:latest)
             
             # Keep only the last 2 images of our app
-            docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | \
+            sudo docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | \
               grep "localhost:5000/${{ env.IMAGE_NAME }}" | \
               grep -v "latest" | \
               awk '{print $2}' | \
-              xargs -r docker rmi -f 2>/dev/null || true
+              xargs -r sudo docker rmi -f 2>/dev/null || true
             
             # Remove dangling images
-            docker image prune -f
+            sudo docker image prune -f
             
             echo "✅ Cleanup complete"
           else
-            echo "❌ Deployment failed! Check docker-compose logs"
-            docker-compose logs --tail=50
+            echo "❌ Deployment failed! Check docker compose logs"
+            sudo docker compose logs --tail=50
             exit 1
           fi
