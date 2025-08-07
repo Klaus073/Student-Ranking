@@ -152,7 +152,8 @@ export function SignUpForm({
     console.log('Starting signup process for:', email);
     
     // Debug: Log the redirect URL that will be used
-    const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, '').trim();
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    const baseUrl = siteUrl.replace(/\/$/, '').replace(/\s+/g, '').trim();
     const redirectUrl = `${baseUrl}/auth/confirm?next=/dashboard`;
     console.log('Email redirect URL:', redirectUrl);
     console.log('NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL);

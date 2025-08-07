@@ -32,7 +32,8 @@ export function ForgotPasswordForm({
 
     try {
       // Debug: Log the redirect URL that will be used
-      const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, '').trim();
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      const baseUrl = siteUrl.replace(/\/$/, '').replace(/\s+/g, '').trim();
       const redirectUrl = `${baseUrl}/auth/update-password`;
       console.log('Password reset redirect URL:', redirectUrl);
       console.log('NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL);
