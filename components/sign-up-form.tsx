@@ -150,6 +150,12 @@ export function SignUpForm({
     }
 
     console.log('Starting signup process for:', email);
+    
+    // Debug: Log the redirect URL that will be used
+    const redirectUrl = `${(process.env.NEXT_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, '')}/auth/confirm?next=/dashboard`;
+    console.log('Email redirect URL:', redirectUrl);
+    console.log('NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL);
+    console.log('window.location.origin:', typeof window !== 'undefined' ? window.location.origin : 'N/A (server-side)');
 
     try {
       const signupData = {
@@ -181,7 +187,7 @@ export function SignUpForm({
           // After the user clicks the confirmation link, Supabase will redirect
           // them back to this URL. Our /auth/confirm route handles OTP verification
           // and profile creation, finally redirecting the user onwards (e.g. dashboard).
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/confirm?next=/dashboard`,
+          emailRedirectTo: redirectUrl,
           data: signupData,
         },
       });
