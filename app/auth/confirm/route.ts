@@ -3,6 +3,7 @@ import { type EmailOtpType, type User } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { type NextRequest, NextResponse } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { getSiteUrl } from "@/lib/cfg";
 
 interface InternshipMetadata {
   tier: string;
@@ -126,7 +127,8 @@ export async function GET(request: NextRequest) {
     console.log('🎉 COMPLETE SUCCESS - Profile created, redirecting to:', next);
     
     // Create a response with proper redirect and ensure cookies are set
-    const redirectUrl = new URL(next, request.url);
+    const base = getSiteUrl().replace(/\/$/, "");
+    const redirectUrl = new URL(next, base);
     const response = NextResponse.redirect(redirectUrl);
     
     // Copy any session cookies from Supabase client to response
