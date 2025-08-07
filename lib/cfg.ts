@@ -1,3 +1,29 @@
+// Get the correct site URL for email redirects, handling different environments
+export function getSiteUrl(): string {
+  // Check if we have an explicit NEXT_PUBLIC_SITE_URL set
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL;
+  }
+  
+  // For Vercel deployments
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  
+  // For server-side calls, we need to construct the URL
+  if (typeof window === 'undefined') {
+    // Server-side: Check for common production environment indicators
+    if (process.env.NODE_ENV === 'production') {
+      // You can set a fallback production URL here if needed
+      return process.env.PRODUCTION_URL || 'http://localhost:3000';
+    }
+    return 'http://localhost:3000';
+  }
+  
+  // Client-side fallback
+  return window.location.origin;
+}
+
 export const CFG = {
   lookups: {
     uni_y1: [
