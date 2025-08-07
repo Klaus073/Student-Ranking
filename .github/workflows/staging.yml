@@ -29,7 +29,10 @@ jobs:
     
     - name: Build Docker image
       run: |
-        docker build -t ${{ env.IMAGE_NAME }}:latest .
+        docker build \
+          --build-arg NEXT_PUBLIC_SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+          --build-arg NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=${{ secrets.SUPABASE_ANON }} \
+          -t ${{ env.IMAGE_NAME }}:latest .
         docker tag ${{ env.IMAGE_NAME }}:latest ${{ secrets.REGISTRY_HOST }}/${{ env.IMAGE_NAME }}:latest
         docker tag ${{ env.IMAGE_NAME }}:latest ${{ secrets.REGISTRY_HOST }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
     

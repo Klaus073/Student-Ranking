@@ -8,7 +8,13 @@ RUN npm install
 
 # Step 2: Build the Next.js app
 FROM node:18-alpine AS builder
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY
 WORKDIR /app
+
+# Make the build-time env vars available to Next.js during `npm run build`
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -21,7 +27,13 @@ RUN npm run build
 
 # Step 3: Create production image
 FROM node:18-alpine AS runner
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY
 WORKDIR /app
+
+# Persist the env vars at runtime as well
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY
 
 ENV NODE_ENV=production
 
