@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bell, User, Settings, LogOut, ChevronDown } from "lucide-react";
+import { User, Settings, LogOut, ChevronDown } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
@@ -28,7 +28,7 @@ export default function Navigation() {
   if (pathname.startsWith("/auth")) {
     return null;
   }
-  const [user, setUser] = useState<{ email?: string; user_metadata?: { name?: string } } | null>(null);
+  const [user, setUser] = useState<{ email?: string; user_metadata?: { name?: string; full_name?: string } } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function Navigation() {
   };
 
   const getUserDisplayName = () => {
-    return user?.email?.split('@')[0] || user?.user_metadata?.name || 'User';
+    return user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
   };
 
   const getUserEmail = () => {
@@ -102,9 +102,6 @@ export default function Navigation() {
         
         {/* Right side - User actions */}
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-300">
-            <Bell className="h-5 w-5" />
-          </Button>
           
           {/* User Dropdown */}
           <DropdownMenu>
