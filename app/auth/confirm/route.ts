@@ -6,15 +6,15 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSiteUrl } from "@/lib/cfg";
 
 interface InternshipMetadata {
-  tier: string;
-  months: number;
-  years: number;
+  tier: string; // "1" | "2" | "3"
+  months: number; // 1..12
+  year: number; // 2020..2030
 }
 
 interface SocietyRoleMetadata {
-  role: string;
-  size: string;
-  years: number;
+  role_title: string; // president | vice | committee | member
+  society_size: string; // small | medium | large
+  years_ago: number; // 0..4
 }
 
 export async function GET(request: NextRequest) {
@@ -104,7 +104,10 @@ export async function GET(request: NextRequest) {
       console.log('📊 USER METADATA FOUND:', {
         metadataKeys: Object.keys(data.user.user_metadata),
         fullName: data.user.user_metadata.full_name,
-        university: data.user.user_metadata.university
+        university: data.user.user_metadata.university,
+        alevel_band: data.user.user_metadata.alevel_band,
+        gcse_band: data.user.user_metadata.gcse_band,
+        uni_grades_band: data.user.user_metadata.uni_grades_band
       });
     } else {
       console.log('⚠️ NO USER METADATA - will create minimal profile');
@@ -199,7 +202,7 @@ async function createUserProfileReliably(supabase: SupabaseClient, user: User): 
       full_name: metadata.full_name || 'Unknown User',
       current_year: metadata.current_year ? parseInt(metadata.current_year) : null,
       university: metadata.university || null,
-      grades: metadata.grades || null,
+      grades: (metadata as any).uni_grades_band || null,
       bank_internship_tier: metadata.bank_internship_tier || null,
       industry_exposure: metadata.industry_exposure || null,
       months_of_experience: parseInt(metadata.months_of_experience as string) || 0,
@@ -218,53 +221,47 @@ async function createUserProfileReliably(supabase: SupabaseClient, user: User): 
     console.log('✅ Main profile created successfully');
 
     // 2. Create A-Level records
-    if (metadata.a_levels && Array.isArray(metadata.a_levels)) {
-      console.log(`📚 Creating ${metadata.a_levels.length} A-Level records...`);
-      const aLevelRecords = metadata.a_levels.map((subject: string) => ({
+    // Persist A-level subjects if provided
+    if ((metadata as any).a_levels && Array.isArray((metadata as any).a_levels)) {
+      console.log(`📚 Creating ${(metadata as any).a_levels.length} A-Level subject records...`);
+      const aLevelRecords = (metadata as any).a_levels.map((subject: string) => ({
         user_id: user.id,
-        subject: subject,
+        subject,
       }));
-      
-      const { error: aLevelsError } = await supabase
-        .from('student_alevels')
-        .insert(aLevelRecords);
-      
+      const { error: aLevelsError } = await supabase.from('student_alevels').insert(aLevelRecords);
       if (aLevelsError) {
-        console.error('❌ Error creating A-levels:', aLevelsError);
+        console.error('❌ Error creating A-level subjects:', aLevelsError);
         return { success: false, error: `A-levels creation failed: ${aLevelsError.message}` };
       }
-      console.log(`✅ Created ${aLevelRecords.length} A-level records`);
+      console.log(`✅ Created ${aLevelRecords.length} A-level subject records`);
     }
 
     // 3. Create GCSE records
-    if (metadata.gcses && Array.isArray(metadata.gcses)) {
-      console.log(`📖 Creating ${metadata.gcses.length} GCSE records...`);
-      const gcseRecords = metadata.gcses.map((subject: string) => ({
+    // Persist GCSE subjects if provided
+    if ((metadata as any).gcses && Array.isArray((metadata as any).gcses)) {
+      console.log(`📖 Creating ${(metadata as any).gcses.length} GCSE subject records...`);
+      const gcseRecords = (metadata as any).gcses.map((subject: string) => ({
         user_id: user.id,
-        subject: subject,
+        subject,
       }));
-      
-      const { error: gcsesError } = await supabase
-        .from('student_gcses')
-        .insert(gcseRecords);
-      
+      const { error: gcsesError } = await supabase.from('student_gcses').insert(gcseRecords);
       if (gcsesError) {
-        console.error('❌ Error creating GCSEs:', gcsesError);
+        console.error('❌ Error creating GCSE subjects:', gcsesError);
         return { success: false, error: `GCSEs creation failed: ${gcsesError.message}` };
       }
-      console.log(`✅ Created ${gcseRecords.length} GCSE records`);
+      console.log(`✅ Created ${gcseRecords.length} GCSE subject records`);
     }
 
     // 4. Create internship records
-    if (metadata.internships && Array.isArray(metadata.internships)) {
-      console.log(`💼 Creating ${metadata.internships.length} internship records...`);
-      const internshipRecords = metadata.internships
+    if ((metadata as any).internships && Array.isArray((metadata as any).internships)) {
+      console.log(`💼 Creating ${(metadata as any).internships.length} internship records...`);
+      const internshipRecords = (metadata as any).internships
         .filter((internship: InternshipMetadata) => internship.tier && internship.tier.trim())
         .map((internship: InternshipMetadata) => ({
           user_id: user.id,
           tier: internship.tier,
           months: internship.months || 0,
-          year: internship.years || 0,
+          year: internship.year || 0,
         }));
       
       if (internshipRecords.length > 0) {
@@ -281,15 +278,15 @@ async function createUserProfileReliably(supabase: SupabaseClient, user: User): 
     }
 
     // 5. Create society role records
-    if (metadata.society_roles && Array.isArray(metadata.society_roles)) {
-      console.log(`🏛️ Creating ${metadata.society_roles.length} society role records...`);
-      const societyRecords = metadata.society_roles
-        .filter((role: SocietyRoleMetadata) => role.role && role.role.trim())
+    if ((metadata as any).society_roles && Array.isArray((metadata as any).society_roles)) {
+      console.log(`🏛️ Creating ${(metadata as any).society_roles.length} society role records...`);
+      const societyRecords = (metadata as any).society_roles
+        .filter((role: SocietyRoleMetadata) => role.role_title && role.role_title.trim())
         .map((role: SocietyRoleMetadata) => ({
           user_id: user.id,
-          role_title: role.role,
-          society_size: role.size.toLowerCase(), // Ensure lowercase for constraint
-          years_active: role.years || 0,
+          role_title: role.role_title,
+          society_size: role.society_size.toLowerCase(), // Ensure lowercase for constraint
+          years_active: role.years_ago || 0,
         }));
       
       if (societyRecords.length > 0) {

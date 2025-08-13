@@ -1,31 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Star, Search, Download, TrendingUp } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { createClient } from "@/lib/supabase/client";
 
-// Mock data for analytics
-const topPerformers = [
-  { id: 1, name: "Sarah Chen", university: "MIT", year: "Y3", score: 965, rank: 1, stars: 5 },
-  { id: 2, name: "Alex Johnson", university: "Stanford", year: "Y3", score: 940, rank: 2, stars: 5 },
-  { id: 3, name: "Maria Rodriguez", university: "Harvard", year: "Y2", score: 915, rank: 3, stars: 4 }
-];
-
-const rankingsData = [
-  { rank: 1, name: "Sarah Chen", university: "MIT", year: "Y3", academic: 98, experience: 95, composite: 965, stars: 5, trend: "up" },
-  { rank: 2, name: "Alex Johnson", university: "Stanford", year: "Y3", academic: 96, experience: 92, composite: 940, stars: 5, trend: "up" },
-  { rank: 3, name: "Maria Rodriguez", university: "Harvard", year: "Y2", academic: 94, experience: 89, composite: 915, stars: 4, trend: "up" },
-  { rank: 4, name: "David Kim", university: "Caltech", year: "Y3", academic: 92, experience: 86, composite: 890, stars: 4, trend: "down" },
-  { rank: 5, name: "Emma Wilson", university: "MIT", year: "Y2", academic: 90, experience: 85, composite: 875, stars: 4, trend: "up" },
-  { rank: 6, name: "James Brown", university: "Stanford", year: "Y3", academic: 88, experience: 87, composite: 860, stars: 4, trend: "same" },
-  { rank: 7, name: "Lisa Zhang", university: "Harvard", year: "Y1", academic: 89, experience: 82, composite: 855, stars: 4, trend: "up" },
-  { rank: 8, name: "Michael Davis", university: "Caltech", year: "Y2", academic: 87, experience: 84, composite: 850, stars: 4, trend: "down" },
-  { rank: 9, name: "Anna Taylor", university: "MIT", year: "Y1", academic: 85, experience: 83, composite: 840, stars: 4, trend: "up" },
-  { rank: 10, name: "Robert Lee", university: "Stanford", year: "Y2", academic: 84, experience: 81, composite: 825, stars: 4, trend: "same" }
-];
+type TopRow = { rank: number; academic: number; experience: number; composite: number; stars: number; user_id: string; student: { full_name: string | null; university: string | null; current_year: number | null } | null };
+type BoardRow = { rank: number; academic: number; experience: number; composite: number; stars: number; student: { full_name: string | null; university: string | null; current_year: number | null } | null };
 
 const starDistribution = [
   { name: "5 Stars", value: 88, percentage: 7.0, color: "#FFFFFF" },
@@ -63,6 +47,74 @@ const universityComparison = [
 
 export default function AnalyticsPage() {
   const [activeTab, setActiveTab] = useState("rankings");
+  const [topPerformers, setTopPerformers] = useState<TopRow[]>([]);
+  const [rankingsData, setRankingsData] = useState<BoardRow[]>([]);
+  const [loadingTop, setLoadingTop] = useState(true);
+  const [loadingBoard, setLoadingBoard] = useState(true);
+  const [errorTop, setErrorTop] = useState<string | null>(null);
+  const [errorBoard, setErrorBoard] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 25;
+
+  useEffect(() => {
+    const supabase = createClient();
+    const loadTop = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('student_rankings')
+          .select('rank, academic, experience, composite, stars, user_id')
+          .not('rank', 'is', null)
+          .order('rank', { ascending: true })
+          .limit(3);
+        if (error) setErrorTop(error.message); else {
+          const ids = (data || []).map((r: any) => r.user_id);
+          let profiles: Record<string, { full_name: string | null; university: string | null; current_year: number | null }> = {};
+          if (ids.length > 0) {
+            const { data: profs } = await supabase
+              .from('student_profiles')
+              .select('user_id, full_name, university, current_year')
+              .in('user_id', ids);
+            (profs || []).forEach((p: any) => { profiles[p.user_id] = { full_name: p.full_name, university: p.university, current_year: p.current_year }; });
+          }
+          const merged = (data || []).map((r: any) => ({ ...r, student: profiles[r.user_id] || null }));
+          setTopPerformers(merged as TopRow[]);
+        }
+      } catch (e) { setErrorTop(e instanceof Error ? e.message : 'Unknown error'); }
+      finally { setLoadingTop(false); }
+    };
+    loadTop();
+  }, []);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    const loadBoard = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('student_rankings')
+          .select('rank, academic, experience, composite, stars, user_id')
+          .not('rank', 'is', null)
+          .order('rank', { ascending: true })
+          .range(from, to);
+        if (error) setErrorBoard(error.message); else {
+          const ids = (data || []).map((r: any) => r.user_id);
+          let profiles: Record<string, { full_name: string | null; university: string | null; current_year: number | null }> = {};
+          if (ids.length > 0) {
+            const { data: profs } = await supabase
+              .from('student_profiles')
+              .select('user_id, full_name, university, current_year')
+              .in('user_id', ids);
+            (profs || []).forEach((p: any) => { profiles[p.user_id] = { full_name: p.full_name, university: p.university, current_year: p.current_year }; });
+          }
+          const merged = (data || []).map((r: any) => ({ ...r, student: profiles[r.user_id] || null }));
+          setRankingsData(merged as BoardRow[]);
+        }
+      } catch (e) { setErrorBoard(e instanceof Error ? e.message : 'Unknown error'); }
+      finally { setLoadingBoard(false); }
+    };
+    loadBoard();
+  }, [page]);
 
   const GlobalRankingsTab = () => (
     <div>
@@ -70,21 +122,23 @@ export default function AnalyticsPage() {
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-white mb-4">Top Performers</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {topPerformers.map((performer) => (
-            <Card key={performer.id} className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 text-center shadow-xl">
+          {loadingTop && <div className="grid grid-cols-1 md:grid-cols-3 gap-6"><div className="h-40 bg-gray-900 rounded"/><div className="h-40 bg-gray-900 rounded"/><div className="h-40 bg-gray-900 rounded"/></div>}
+          {errorTop && <div className="text-sm text-red-400">{errorTop}</div>}
+          {!loadingTop && !errorTop && topPerformers.map((performer, idx) => (
+            <Card key={idx} className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 text-center shadow-xl">
               <div className="relative mb-4">
                 <div className="w-16 h-16 bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center">
                   <span className="text-white font-bold text-lg">
-                    {performer.name.split(' ').map(n => n[0]).join('')}
+                    {(performer.student?.full_name || 'NA').split(' ').map(n => n[0]).join('')}
                   </span>
                 </div>
                 <div className="absolute -top-2 -right-2 bg-white text-black text-xs font-bold px-2 py-1 rounded-full">
                   #{performer.rank}
                 </div>
               </div>
-              <h3 className="text-white font-semibold mb-1">{performer.name}</h3>
-              <p className="text-gray-400 text-sm mb-2">{performer.university} • {performer.year}</p>
-              <div className="text-2xl font-bold text-white mb-2">{performer.score}</div>
+              <h3 className="text-white font-semibold mb-1">{performer.student?.full_name || 'Unknown'}</h3>
+              <p className="text-gray-400 text-sm mb-2">{performer.student?.university || '—'} • Y{performer.student?.current_year ?? '—'}</p>
+              <div className="text-2xl font-bold text-white mb-2">{performer.composite}</div>
               <div className="flex justify-center space-x-1">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
@@ -157,12 +211,15 @@ export default function AnalyticsPage() {
               </tr>
             </thead>
             <tbody>
-              {rankingsData.map((student) => (
-                <tr key={student.rank} className="border-b border-gray-800 hover:bg-gray-800/30 transition-colors">
+              {rankingsData.length === 0 && (
+                <tr><td colSpan={9} className="p-6 text-gray-400">No data</td></tr>
+              )}
+              {rankingsData.map((student, idx) => (
+                <tr key={idx} className="border-b border-gray-800 hover:bg-gray-800/30 transition-colors">
                   <td className="p-4 text-white font-medium">#{student.rank}</td>
-                  <td className="p-4 text-white">{student.name}</td>
-                  <td className="p-4 text-gray-300">{student.university}</td>
-                  <td className="p-4 text-gray-300">{student.year}</td>
+                  <td className="p-4 text-white">{student.student?.full_name || 'Unknown'}</td>
+                  <td className="p-4 text-gray-300">{student.student?.university || '—'}</td>
+                  <td className="p-4 text-gray-300">Y{student.student?.current_year ?? '—'}</td>
                   <td className="p-4 text-white">{student.academic}</td>
                   <td className="p-4 text-white">{student.experience}</td>
                   <td className="p-4 text-white font-semibold">{student.composite}</td>
@@ -179,10 +236,7 @@ export default function AnalyticsPage() {
                     </div>
                   </td>
                   <td className="p-4">
-                    <TrendingUp className={`h-4 w-4 ${
-                      student.trend === 'up' ? 'text-white' : 
-                      student.trend === 'down' ? 'text-gray-500' : 'text-gray-400'
-                    }`} />
+                    <TrendingUp className={`h-4 w-4 text-white`} />
                   </td>
                 </tr>
               ))}
@@ -190,13 +244,11 @@ export default function AnalyticsPage() {
           </table>
         </div>
         <div className="p-4 border-t border-gray-800 flex justify-between items-center text-gray-400 text-sm">
-          <span>Showing 1 to 10 of 1,250 results</span>
+          <span>Page {page}</span>
           <div className="flex space-x-2">
-            <Button variant="ghost" size="sm" className="text-gray-300">Previous</Button>
-            <Button variant="ghost" size="sm" className="bg-white text-black">1</Button>
-            <Button variant="ghost" size="sm" className="text-gray-300">2</Button>
-            <Button variant="ghost" size="sm" className="text-gray-300">3</Button>
-            <Button variant="ghost" size="sm" className="text-gray-300">Next</Button>
+            <Button variant="ghost" size="sm" className="text-gray-300" onClick={() => setPage(Math.max(1, page-1))}>Previous</Button>
+            <Button variant="ghost" size="sm" className="bg-white text-black" onClick={() => setPage(page)}>{page}</Button>
+            <Button variant="ghost" size="sm" className="text-gray-300" onClick={() => setPage(page+1)}>Next</Button>
           </div>
         </div>
       </Card>
