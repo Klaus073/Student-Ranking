@@ -9,7 +9,8 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow",
+      // Consistent dark gradient panel across the app (matches dashboard)
+      "rounded-xl border bg-card text-card-foreground shadow bg-gradient-to-br from-black via-gray-900 to-black border-gray-800",
       className,
     )}
     {...props}
