@@ -527,7 +527,7 @@ export default function ProfilePage() {
                           <p className="text-sm text-gray-400">{role.society_size} • {role.years_active} years • {role.years_ago} yrs ago</p>
                         </div>
                         <div className="flex gap-2">
-                          <Button variant="outline" onClick={()=>{setEditingRoleId(role.id); setEditingRole({ role_title: role.role_title, society_size: role.society_size, years_active: role.years_active, years_ago: role.years_ago });}}>Edit</Button>
+                          <Button variant="outline" onClick={()=>{setEditingRoleId(role.id); setEditingRole({ role_title: role.role_title, society_size: role.society_size, years_active: role.years_active, years_ago: role.years_ago ?? 0 });}}>Edit</Button>
                           <Button variant="destructive" onClick={()=>deleteRole(role.id)} disabled={saving}>Delete</Button>
                         </div>
                       </div>

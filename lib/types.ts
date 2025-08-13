@@ -51,6 +51,7 @@ export type SocietyRole = {
   role_title: string;
   society_size: string;
   years_active: number;
+  years_ago?: number;
   created_at: string;
 };
 
