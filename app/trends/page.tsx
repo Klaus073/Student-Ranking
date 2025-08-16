@@ -1,9 +1,11 @@
 "use client";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter } from 'recharts';
 import { TrendingUp, Users, Award } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
-// Mock data for trends
+// Placeholder for timeline until we confirm the correct time dimension
 const timelineData = [
   { month: "Jan", MIT: 820, Stanford: 815, Harvard: 810, Caltech: 805 },
   { month: "Feb", MIT: 825, Stanford: 818, Harvard: 813, Caltech: 808 },
@@ -13,16 +15,7 @@ const timelineData = [
   { month: "Jun", MIT: 847, Stanford: 832, Harvard: 825, Caltech: 820 }
 ];
 
-const correlationData = [
-  { internships: 0, ranking: 450 },
-  { internships: 1, ranking: 320 },
-  { internships: 2, ranking: 180 },
-  { internships: 3, ranking: 120 },
-  { internships: 4, ranking: 80 },
-  { internships: 5, ranking: 45 },
-  { internships: 6, ranking: 25 },
-  { internships: 7, ranking: 15 }
-];
+type CorrPoint = { internships: number; score: number };
 
 const keyInsights = [
   {
@@ -49,6 +42,59 @@ const keyInsights = [
 ];
 
 export default function TrendsPage() {
+  const [corrLoading, setCorrLoading] = useState(true);
+  const [corrError, setCorrError] = useState<string | null>(null);
+  const [corrData, setCorrData] = useState<CorrPoint[]>([]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const loadCorrelation = async () => {
+      try {
+        const [{ data: ranks, error: ranksError }, { data: internships, error: internError }] = await Promise.all([
+          supabase.from('student_rankings').select('user_id, composite'),
+          supabase.from('student_internships').select('user_id')
+        ]);
+        if (ranksError) throw new Error(ranksError.message);
+        if (internError) throw new Error(internError.message);
+
+        const internshipCountByUser: Record<string, number> = {};
+        (internships || []).forEach((row: any) => {
+          const uid = row.user_id as string;
+          internshipCountByUser[uid] = (internshipCountByUser[uid] || 0) + 1;
+        });
+
+        const points: CorrPoint[] = (ranks || []).map((r: any) => ({
+          internships: internshipCountByUser[r.user_id] || 0,
+          score: Number(r.composite || 0)
+        }));
+        setCorrData(points);
+        setCorrError(null);
+      } catch (e) {
+        setCorrError(e instanceof Error ? e.message : 'Failed to load correlation data');
+      } finally {
+        setCorrLoading(false);
+      }
+    };
+    loadCorrelation();
+  }, []);
+
+  const corrLabel = useMemo(() => {
+    if (!corrData.length) return null;
+    // Quick direction note via simple Pearson approximation
+    const xs = corrData.map(p => p.internships);
+    const ys = corrData.map(p => p.score);
+    const mean = (arr: number[]) => arr.reduce((a,b)=>a+b,0) / (arr.length || 1);
+    const mx = mean(xs), my = mean(ys);
+    let num = 0, dx = 0, dy = 0;
+    for (let i = 0; i < xs.length; i++) {
+      const vx = xs[i] - mx; const vy = ys[i] - my;
+      num += vx * vy; dx += vx * vx; dy += vy * vy;
+    }
+    const r = (dx === 0 || dy === 0) ? 0 : (num / Math.sqrt(dx * dy));
+    const rStr = (Math.round(r * 100) / 100).toFixed(2);
+    return `Correlation (r): ${rStr}`;
+  }, [corrData]);
+
   return (
     <div className="min-h-screen bg-black p-6">
       <div className="max-w-7xl mx-auto">
@@ -99,25 +145,33 @@ export default function TrendsPage() {
           {/* Correlation Analysis */}
           <Card className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 shadow-xl">
             <h3 className="text-lg font-semibold text-white mb-4">Internship Impact Analysis</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <ScatterChart data={correlationData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="internships" stroke="#9CA3AF" />
-                <YAxis dataKey="ranking" stroke="#9CA3AF" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1F2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '6px',
-                    color: '#FFFFFF'
-                  }} 
-                />
-                <Scatter dataKey="ranking" fill="#FFFFFF" />
-              </ScatterChart>
-            </ResponsiveContainer>
-            <p className="text-gray-400 text-sm mt-3">
-              Strong negative correlation (-0.78) between internship count and ranking position
-            </p>
+            {corrLoading ? (
+              <div className="h-72 bg-gray-900 rounded animate-pulse" />
+            ) : corrError ? (
+              <div className="text-sm text-red-400">{corrError}</div>
+            ) : (
+            <>
+              <ResponsiveContainer width="100%" height={300}>
+                <ScatterChart data={corrData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="internships" stroke="#9CA3AF" />
+                  <YAxis dataKey="score" stroke="#9CA3AF" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1F2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '6px',
+                      color: '#FFFFFF'
+                    }} 
+                  />
+                  <Scatter dataKey="score" fill="#FFFFFF" />
+                </ScatterChart>
+              </ResponsiveContainer>
+              <p className="text-gray-400 text-sm mt-3">
+                {corrLabel || 'Correlation unavailable'}
+              </p>
+            </>
+            )}
           </Card>
 
           {/* Key Insights */}
