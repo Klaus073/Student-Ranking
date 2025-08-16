@@ -4,46 +4,17 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, Search, Download, TrendingUp } from "lucide-react";
+import { Star, Search, Download } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { createClient } from "@/lib/supabase/client";
 
 type TopRow = { rank: number; academic: number; experience: number; composite: number; stars: number; user_id: string; student: { full_name: string | null; university: string | null; current_year: number | null } | null };
 type BoardRow = { rank: number; academic: number; experience: number; composite: number; stars: number; student: { full_name: string | null; university: string | null; current_year: number | null } | null };
 
-const starDistribution = [
-  { name: "5 Stars", value: 88, percentage: 7.0, color: "#FFFFFF" },
-  { name: "4 Stars", value: 358, percentage: 28.6, color: "#D1D5DB" },
-  { name: "3 Stars", value: 512, percentage: 41.0, color: "#9CA3AF" },
-  { name: "2 Stars", value: 234, percentage: 18.7, color: "#6B7280" },
-  { name: "1 Star", value: 58, percentage: 4.7, color: "#374151" }
-];
-
-const yearWiseData = [
-  { year: "Y0", avgScore: 720, change: "+45", students: 342 },
-  { year: "Y1", avgScore: 765, change: "+47", students: 298 },
-  { year: "Y2", avgScore: 812, change: "+51", students: 267 },
-  { year: "Y3", avgScore: 847, change: "+35", students: 343 }
-];
-
-// Additional data for Comparative Insights
-const scoreDistribution = [
-  { range: "900-1000", count: 45, percentage: 3.6 },
-  { range: "800-899", count: 234, percentage: 18.7 },
-  { range: "700-799", count: 456, percentage: 36.5 },
-  { range: "600-699", count: 378, percentage: 30.2 },
-  { range: "500-599", count: 134, percentage: 10.7 },
-  { range: "400-499", count: 3, percentage: 0.3 }
-];
-
-const universityComparison = [
-  { name: "MIT", academic: 85, experience: 82, composite: 847 },
-  { name: "Stanford", academic: 83, experience: 80, composite: 832 },
-  { name: "Harvard", academic: 82, experience: 78, composite: 825 },
-  { name: "Caltech", academic: 81, experience: 76, composite: 815 },
-  { name: "Princeton", academic: 79, experience: 75, composite: 798 },
-  { name: "Yale", academic: 78, experience: 73, composite: 785 }
-];
+type StarDist = { name: string; value: number; percentage: number; color: string };
+type YearWise = { year: string; avgScore: number; change: string; students: number };
+type ScoreBin = { range: string; count: number; percentage: number };
+type UnivComp = { name: string; academic: number; experience: number; composite: number };
 
 export default function AnalyticsPage() {
   const [activeTab, setActiveTab] = useState("rankings");
@@ -53,6 +24,12 @@ export default function AnalyticsPage() {
   const [loadingBoard, setLoadingBoard] = useState(true);
   const [errorTop, setErrorTop] = useState<string | null>(null);
   const [errorBoard, setErrorBoard] = useState<string | null>(null);
+  const [insightsLoading, setInsightsLoading] = useState(true);
+  const [insightsError, setInsightsError] = useState<string | null>(null);
+  const [starDist, setStarDist] = useState<StarDist[]>([]);
+  const [yearWise, setYearWise] = useState<YearWise[]>([]);
+  const [scoreDist, setScoreDist] = useState<ScoreBin[]>([]);
+  const [universityComp, setUniversityComp] = useState<UnivComp[]>([]);
   const [page, setPage] = useState(1);
   const pageSize = 25;
 
@@ -76,7 +53,11 @@ export default function AnalyticsPage() {
               .in('user_id', ids);
             (profs || []).forEach((p: any) => { profiles[p.user_id] = { full_name: p.full_name, university: p.university, current_year: p.current_year }; });
           }
-          const merged = (data || []).map((r: any) => ({ ...r, student: profiles[r.user_id] || null }));
+          const merged = (data || []).map((r: any) => {
+            const raw = r.stars as unknown;
+            const numeric = typeof raw === 'number' ? raw : (typeof raw === 'string' ? (raw.match(/★/g) || []).length : 0);
+            return { ...r, stars: numeric, student: profiles[r.user_id] || null };
+          });
           setTopPerformers(merged as TopRow[]);
         }
       } catch (e) { setErrorTop(e instanceof Error ? e.message : 'Unknown error'); }
@@ -107,7 +88,11 @@ export default function AnalyticsPage() {
               .in('user_id', ids);
             (profs || []).forEach((p: any) => { profiles[p.user_id] = { full_name: p.full_name, university: p.university, current_year: p.current_year }; });
           }
-          const merged = (data || []).map((r: any) => ({ ...r, student: profiles[r.user_id] || null }));
+          const merged = (data || []).map((r: any) => {
+            const raw = r.stars as unknown;
+            const numeric = typeof raw === 'number' ? raw : (typeof raw === 'string' ? (raw.match(/★/g) || []).length : 0);
+            return { ...r, stars: numeric, student: profiles[r.user_id] || null };
+          });
           setRankingsData(merged as BoardRow[]);
         }
       } catch (e) { setErrorBoard(e instanceof Error ? e.message : 'Unknown error'); }
@@ -115,6 +100,123 @@ export default function AnalyticsPage() {
     };
     loadBoard();
   }, [page]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const loadInsights = async () => {
+      try {
+        // Pull all rankings needed for aggregations
+        const { data: ranks, error: ranksError } = await supabase
+          .from('student_rankings')
+          .select('user_id, academic, experience, composite, stars, rank');
+        if (ranksError) throw new Error(ranksError.message);
+
+        const userIds = (ranks || []).map(r => r.user_id);
+        let profiles: { [userId: string]: { university: string | null; current_year: number | null } } = {};
+        if (userIds.length > 0) {
+          const { data: profs, error: profsError } = await supabase
+            .from('student_profiles')
+            .select('user_id, university, current_year')
+            .in('user_id', userIds);
+          if (profsError) throw new Error(profsError.message);
+          (profs || []).forEach((p: any) => {
+            profiles[p.user_id] = { university: p.university, current_year: p.current_year };
+          });
+        }
+
+        // Helpers
+        const starOf = (s: any): number => {
+          if (typeof s === 'number') return s;
+          if (typeof s === 'string') return (s.match(/★/g) || []).length;
+          return 0;
+        };
+
+        // Star distribution (1..5)
+        const starCounts: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        (ranks || []).forEach(r => {
+          const s = Math.max(0, Math.min(5, starOf((r as any).stars)));
+          if (s >= 1) starCounts[s] = (starCounts[s] || 0) + 1;
+        });
+        const totalStars = Object.values(starCounts).reduce((a, b) => a + b, 0) || 1;
+        const starPalette = ["#374151", "#6B7280", "#9CA3AF", "#D1D5DB", "#FFFFFF"]; // 1..5
+        const starDistData: StarDist[] = [1,2,3,4,5].map((s, idx) => ({
+          name: `${s} ${s === 1 ? 'Star' : 'Stars'}`,
+          value: starCounts[s] || 0,
+          percentage: Math.round(((starCounts[s] || 0) / totalStars) * 1000) / 10,
+          color: starPalette[idx]
+        }));
+        setStarDist(starDistData);
+
+        // Score distribution (auto 6 bins)
+        const composites = (ranks || []).map(r => Number((r as any).composite || 0)).filter(n => !isNaN(n));
+        const maxComposite = Math.max(0, ...composites);
+        const minComposite = Math.min(0, ...composites, 0);
+        const bins = 6;
+        const binSize = (maxComposite - minComposite) / (bins || 1) || 1;
+        const counts = new Array(bins).fill(0);
+        composites.forEach(val => {
+          let idx = Math.floor((val - minComposite) / binSize);
+          if (idx >= bins) idx = bins - 1;
+          if (idx < 0) idx = 0;
+          counts[idx]++;
+        });
+        const total = composites.length || 1;
+        const scoreDistData: ScoreBin[] = counts.map((c, i) => {
+          const start = Math.round(minComposite + i * binSize);
+          const end = Math.round(minComposite + (i + 1) * binSize);
+          return { range: `${start}-${end}`, count: c, percentage: Math.round((c / total) * 1000) / 10 };
+        });
+        setScoreDist(scoreDistData);
+
+        // Year-wise performance
+        const yearAgg: Record<number, { sum: number; count: number } > = { 0: { sum: 0, count: 0 }, 1: { sum: 0, count: 0 }, 2: { sum: 0, count: 0 }, 3: { sum: 0, count: 0 } };
+        (ranks || []).forEach(r => {
+          const prof = profiles[(r as any).user_id];
+          const yr = prof?.current_year;
+          if (yr !== null && yr !== undefined && yr >= 0 && yr <= 3) {
+            yearAgg[yr].sum += Number((r as any).composite || 0);
+            yearAgg[yr].count += 1;
+          }
+        });
+        const yData: YearWise[] = [0,1,2,3].map((y, idx) => {
+          const avg = yearAgg[y].count ? Math.round(yearAgg[y].sum / yearAgg[y].count) : 0;
+          const prevAvg = idx > 0 ? (yearAgg[idx - 1].count ? Math.round(yearAgg[idx - 1].sum / yearAgg[idx - 1].count) : 0) : 0;
+          const change = idx > 0 ? ((avg - prevAvg) >= 0 ? `+${avg - prevAvg}` : `${avg - prevAvg}`) : '+0';
+          return { year: `Y${y}`, avgScore: avg, change, students: yearAgg[y].count };
+        });
+        setYearWise(yData);
+
+        // University comparison (top 6 by population)
+        const byUniv: Record<string, { academic: number; experience: number; composite: number; count: number } > = {};
+        (ranks || []).forEach(r => {
+          const prof = profiles[(r as any).user_id];
+          const univ = (prof?.university || 'Unknown').toString();
+          if (!byUniv[univ]) byUniv[univ] = { academic: 0, experience: 0, composite: 0, count: 0 };
+          byUniv[univ].academic += Number((r as any).academic || 0);
+          byUniv[univ].experience += Number((r as any).experience || 0);
+          byUniv[univ].composite += Number((r as any).composite || 0);
+          byUniv[univ].count += 1;
+        });
+        const compData: UnivComp[] = Object.entries(byUniv)
+          .sort((a, b) => b[1].count - a[1].count)
+          .slice(0, 6)
+          .map(([name, agg]) => ({
+            name,
+            academic: agg.count ? Math.round(agg.academic / agg.count) : 0,
+            experience: agg.count ? Math.round(agg.experience / agg.count) : 0,
+            composite: agg.count ? Math.round(agg.composite / agg.count) : 0,
+          }));
+        setUniversityComp(compData);
+
+        setInsightsError(null);
+      } catch (e) {
+        setInsightsError(e instanceof Error ? e.message : 'Failed to load insights');
+      } finally {
+        setInsightsLoading(false);
+      }
+    };
+    loadInsights();
+  }, []);
 
   const GlobalRankingsTab = () => (
     <div>
@@ -207,7 +309,7 @@ export default function AnalyticsPage() {
                 <th className="text-left p-4 text-gray-300 font-medium">EXPERIENCE</th>
                 <th className="text-left p-4 text-gray-300 font-medium">COMPOSITE</th>
                 <th className="text-left p-4 text-gray-300 font-medium">STARS</th>
-                <th className="text-left p-4 text-gray-300 font-medium">TREND</th>
+                
               </tr>
             </thead>
             <tbody>
@@ -235,9 +337,7 @@ export default function AnalyticsPage() {
                       ))}
                     </div>
                   </td>
-                  <td className="p-4">
-                    <TrendingUp className={`h-4 w-4 text-white`} />
-                  </td>
+                  
                 </tr>
               ))}
             </tbody>
@@ -260,8 +360,13 @@ export default function AnalyticsPage() {
       {/* University Comparison */}
       <Card className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 shadow-xl">
         <h3 className="text-lg font-semibold text-white mb-6">University Performance Comparison</h3>
+        {insightsLoading ? (
+          <div className="h-96 bg-gray-900 rounded animate-pulse" />
+        ) : insightsError ? (
+          <div className="text-sm text-red-400">{insightsError}</div>
+        ) : (
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={universityComparison}>
+          <BarChart data={universityComp}>
             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
             <XAxis dataKey="name" stroke="#9CA3AF" />
             <YAxis stroke="#9CA3AF" />
@@ -278,6 +383,7 @@ export default function AnalyticsPage() {
             <Bar dataKey="composite" fill="#6B7280" radius={[2, 2, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
+        )}
         <div className="flex justify-center space-x-6 mt-4">
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 bg-white rounded"></div>
@@ -298,8 +404,11 @@ export default function AnalyticsPage() {
         {/* Score Distribution */}
         <Card className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 shadow-xl">
           <h3 className="text-lg font-semibold text-white mb-4">Score Distribution</h3>
+          {insightsLoading ? (
+            <div className="h-72 bg-gray-900 rounded animate-pulse" />
+          ) : (
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={scoreDistribution}>
+            <BarChart data={scoreDist}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="range" stroke="#9CA3AF" />
               <YAxis stroke="#9CA3AF" />
@@ -314,71 +423,82 @@ export default function AnalyticsPage() {
               <Bar dataKey="count" fill="#FFFFFF" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
+          )}
         </Card>
 
         {/* Star Rating Distribution */}
         <Card className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 shadow-xl">
           <h3 className="text-lg font-semibold text-white mb-4">Star Rating Distribution</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={starDistribution}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {starDistribution.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1F2937', 
-                  border: '1px solid #374151',
-                  borderRadius: '6px',
-                  color: '#FFFFFF'
-                }} 
-              />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="mt-4 space-y-2">
-            {starDistribution.map((item) => (
-              <div key={item.name} className="flex justify-between items-center text-sm">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                  <span className="text-gray-300">{item.name}</span>
+          {insightsLoading ? (
+            <div className="h-72 bg-gray-900 rounded animate-pulse" />
+          ) : (
+          <>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={starDist}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {starDist.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#1F2937', 
+                    border: '1px solid #374151',
+                    borderRadius: '6px',
+                    color: '#FFFFFF'
+                  }} 
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="mt-4 space-y-2">
+              {starDist.map((item) => (
+                <div key={item.name} className="grid grid-cols-[auto_3rem_4rem] items-center gap-2 text-sm">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                    <span className="text-gray-300">{item.name}</span>
+                  </div>
+                  <div className="text-white font-medium text-center tabular-nums">{item.value}</div>
+                  <div className="text-gray-400 text-right tabular-nums">{item.percentage}%</div>
                 </div>
-                <div className="text-white font-medium">{item.value}</div>
-                <div className="text-gray-400">{item.percentage}%</div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
+          )}
         </Card>
       </div>
 
       {/* Year-wise Performance */}
       <Card className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 shadow-xl">
         <h3 className="text-lg font-semibold text-white mb-6">Year-wise Performance Metrics</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {yearWiseData.map((year) => (
-            <div key={year.year} className="text-center">
-              <div className="text-gray-400 text-sm mb-2">{year.year}</div>
-              <div className="text-3xl font-bold text-white mb-2">{year.avgScore}</div>
-              <div className="text-sm text-gray-300 mb-3">Average Score</div>
-              <div className="w-full bg-gray-800 rounded-full h-2 mb-2">
-                <div 
-                  className="bg-white h-2 rounded-full transition-all duration-500" 
-                  style={{ width: `${(year.avgScore / 1000) * 100}%` }}
-                ></div>
+        {insightsLoading ? (
+          <div className="h-40 bg-gray-900 rounded animate-pulse" />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {yearWise.map((year) => (
+              <div key={year.year} className="text-center">
+                <div className="text-gray-400 text-sm mb-2">{year.year}</div>
+                <div className="text-3xl font-bold text-white mb-2">{year.avgScore}</div>
+                <div className="text-sm text-gray-300 mb-3">Average Score</div>
+                <div className="w-full bg-gray-800 rounded-full h-2 mb-2">
+                  <div 
+                    className="bg-white h-2 rounded-full transition-all duration-500" 
+                    style={{ width: `${(year.avgScore / 1000) * 100}%` }}
+                  ></div>
+                </div>
+                <div className="text-sm text-white">{year.change} from previous year</div>
+                <div className="text-xs text-gray-400 mt-1">{year.students} students</div>
               </div>
-              <div className="text-sm text-white">{year.change} from previous year</div>
-              <div className="text-xs text-gray-400 mt-1">{year.students} students</div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </Card>
     </div>
   );
