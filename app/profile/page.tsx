@@ -479,9 +479,8 @@ export default function ProfilePage() {
 
       {/* Achievements & Leadership (roles) */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader>
           <CardTitle>Achievements & Leadership</CardTitle>
-          <Button variant="outline" size="sm" onClick={() => setEditAcademic(true)}>Edit</Button>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
