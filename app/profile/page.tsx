@@ -60,6 +60,7 @@ export default function ProfilePage() {
   // Year editor
   const [editYearOpen, setEditYearOpen] = useState(false);
   const [yearValue, setYearValue] = useState<string>("");
+  const [universityValue, setUniversityValue] = useState<string>("");
 
   useEffect(() => {
     fetchProfile();
@@ -76,6 +77,7 @@ export default function ProfilePage() {
       setAwards(data?.profile?.awards ?? 0);
       setCerts(data?.profile?.certifications ?? 0);
       setYearValue(typeof data?.profile?.current_year === 'number' ? String(data.profile.current_year) : "");
+      setUniversityValue(data?.profile?.university || "");
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -99,9 +101,20 @@ export default function ProfilePage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
       const yearNum = yearValue ? parseInt(yearValue) : null;
+      // Validate university requirement when year is 1–3
+      if (yearNum !== null && [1,2,3].includes(yearNum) && !universityValue) {
+        setError('Please select your university');
+        addToast('Please select your university', 'error');
+        setSaving(false);
+        return;
+      }
+
+      const updates: any = { current_year: yearNum };
+      updates.university = (yearNum !== null && yearNum > 0) ? (universityValue || null) : null;
+
       const { error: upErr } = await supabase
         .from('student_profiles')
-        .update({ current_year: yearNum })
+        .update(updates)
         .eq('user_id', user.id)
         .single();
       if (upErr) throw upErr;
@@ -561,6 +574,20 @@ export default function ProfilePage() {
               </label>
             ))}
           </div>
+          {(["1","2","3"].includes(yearValue)) && (
+            <div className="space-y-2 pt-2">
+              <label className="text-sm text-gray-300">University</label>
+              <Select value={universityValue} onValueChange={setUniversityValue}>
+                <SelectTrigger className="mt-1"><SelectValue placeholder="Select your university"/></SelectTrigger>
+                <SelectContent>
+                  {['Oxford','Cambridge','LSE','Imperial','Warwick','Non-Target'].map(u => (
+                    <SelectItem key={u} value={u}>{u}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <div className="text-xs text-gray-400">Required for years 1–3</div>
+            </div>
+          )}
         </div>
       </Modal>
 
