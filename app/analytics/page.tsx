@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +32,11 @@ export default function AnalyticsPage() {
   const [universityComp, setUniversityComp] = useState<UnivComp[]>([]);
   const [page, setPage] = useState(1);
   const pageSize = 25;
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterYear, setFilterYear] = useState("all"); // all | y0 | y1 | y2 | y3
+  const [filterUniv, setFilterUniv] = useState("all"); // all | mit | stanford | harvard | caltech (placeholder)
+  const [totalCount, setTotalCount] = useState<number | null>(null);
+  const [universities, setUniversities] = useState<string[]>([]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -72,6 +77,18 @@ export default function AnalyticsPage() {
     const to = from + pageSize - 1;
     const loadBoard = async () => {
       try {
+        // Get total count once per page change to govern pagination
+        const { count, error: countError } = await supabase
+          .from('student_rankings')
+          .select('user_id', { count: 'exact', head: true })
+          .not('rank', 'is', null);
+        if (countError) {
+          // ignore count error, fall back to length-based next button logic
+          setTotalCount(null);
+        } else {
+          setTotalCount(count ?? null);
+        }
+
         const { data, error } = await supabase
           .from('student_rankings')
           .select('rank, academic, experience, composite, stars, user_id')
@@ -100,6 +117,42 @@ export default function AnalyticsPage() {
     };
     loadBoard();
   }, [page]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const loadUniversities = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('student_profiles')
+          .select('university')
+          .not('university', 'is', null)
+          .limit(10000);
+        if (error) return;
+        const uniq = Array.from(new Set((data || [])
+          .map((r: any) => (r.university || '').toString().trim())
+          .filter((u: string) => u.length > 0)))
+          .sort((a, b) => a.localeCompare(b));
+        setUniversities(uniq);
+      } catch {}
+    };
+    loadUniversities();
+  }, []);
+
+  const filteredRankings = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return rankingsData.filter((row) => {
+      const name = (row.student?.full_name || "").toLowerCase();
+      const uni = (row.student?.university || "").toLowerCase();
+      const matchesTerm = term === "" || name.includes(term) || uni.includes(term);
+
+      const yr = row.student?.current_year;
+      const matchesYear = filterYear === "all" || (typeof yr === "number" && `y${yr}` === filterYear);
+
+      const matchesUniv = filterUniv === "all" || (uni === filterUniv);
+
+      return matchesTerm && matchesYear && matchesUniv;
+    });
+  }, [rankingsData, searchTerm, filterYear, filterUniv]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -263,9 +316,11 @@ export default function AnalyticsPage() {
           <Input 
             placeholder="Search students..." 
             className="pl-10 bg-gray-900 border-gray-700 text-white placeholder-gray-400"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Select>
+        <Select value={filterYear} onValueChange={setFilterYear}>
           <SelectTrigger className="w-40 bg-gray-900 border-gray-700 text-white">
             <SelectValue placeholder="All Years" />
           </SelectTrigger>
@@ -277,16 +332,15 @@ export default function AnalyticsPage() {
             <SelectItem value="y3">Y3</SelectItem>
           </SelectContent>
         </Select>
-        <Select>
+        <Select value={filterUniv} onValueChange={setFilterUniv}>
           <SelectTrigger className="w-48 bg-gray-900 border-gray-700 text-white">
             <SelectValue placeholder="All Universities" />
           </SelectTrigger>
           <SelectContent className="bg-gray-900 border-gray-700">
             <SelectItem value="all">All Universities</SelectItem>
-            <SelectItem value="mit">MIT</SelectItem>
-            <SelectItem value="stanford">Stanford</SelectItem>
-            <SelectItem value="harvard">Harvard</SelectItem>
-            <SelectItem value="caltech">Caltech</SelectItem>
+            {universities.map(u => (
+              <SelectItem key={u} value={u.toLowerCase()}>{u}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Button className="bg-white hover:bg-gray-200 text-black">
@@ -313,10 +367,10 @@ export default function AnalyticsPage() {
               </tr>
             </thead>
             <tbody>
-              {rankingsData.length === 0 && (
+              {filteredRankings.length === 0 && (
                 <tr><td colSpan={9} className="p-6 text-gray-400">No data</td></tr>
               )}
-              {rankingsData.map((student, idx) => (
+              {filteredRankings.map((student, idx) => (
                 <tr key={idx} className="border-b border-gray-800 hover:bg-gray-800/30 transition-colors">
                   <td className="p-4 text-white font-medium">#{student.rank}</td>
                   <td className="p-4 text-white">{student.student?.full_name || 'Unknown'}</td>
@@ -346,9 +400,32 @@ export default function AnalyticsPage() {
         <div className="p-4 border-t border-gray-800 flex justify-between items-center text-gray-400 text-sm">
           <span>Page {page}</span>
           <div className="flex space-x-2">
-            <Button variant="ghost" size="sm" className="text-gray-300" onClick={() => setPage(Math.max(1, page-1))}>Previous</Button>
-            <Button variant="ghost" size="sm" className="bg-white text-black" onClick={() => setPage(page)}>{page}</Button>
-            <Button variant="ghost" size="sm" className="text-gray-300" onClick={() => setPage(page+1)}>Next</Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-gray-300" 
+              disabled={page === 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Previous
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="bg-white text-black"
+              onClick={() => {}}
+            >
+              {page}
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-gray-300" 
+              disabled={totalCount !== null ? (page * pageSize) >= totalCount : (filteredRankings.length < pageSize)}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </Button>
           </div>
         </div>
       </Card>
@@ -537,8 +614,8 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Tab Content */}
-        {activeTab === "rankings" && <GlobalRankingsTab />}
-        {activeTab === "insights" && <ComparativeInsightsTab />}
+        {activeTab === "rankings" && GlobalRankingsTab()}
+        {activeTab === "insights" && ComparativeInsightsTab()}
       </div>
     </div>
   );
