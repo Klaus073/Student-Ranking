@@ -50,7 +50,7 @@ export default function ProfileForm() {
           .select('activity_type, description, created_at')
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
-          .limit(20);
+          .limit(7);
         if (error) setError(error.message); else setUpdates(data || []);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Unknown error');
@@ -63,42 +63,6 @@ export default function ProfileForm() {
 
   return (
     <div className="space-y-6">
-      {/* Quick Actions */}
-      <Card className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 shadow-xl">
-        <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
-        <div className="space-y-3">
-          <Button className="w-full justify-start h-auto p-4 bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white border border-gray-600 transition-all duration-300">
-            <div className="flex items-center space-x-3">
-              <BookOpen className="h-5 w-5" />
-              <div className="text-left">
-                <div className="font-medium">Update Academic Records</div>
-                <div className="text-sm text-gray-300">Add grades, awards, and certifications</div>
-              </div>
-            </div>
-          </Button>
-          
-          <Button className="w-full justify-start h-auto p-4 bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white border border-gray-600 transition-all duration-300">
-            <div className="flex items-center space-x-3">
-              <Briefcase className="h-5 w-5" />
-              <div className="text-left">
-                <div className="font-medium">Add Internship</div>
-                <div className="text-sm text-gray-300">Log your work experience</div>
-              </div>
-            </div>
-          </Button>
-          
-          <Button className="w-full justify-start h-auto p-4 bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white border border-gray-600 transition-all duration-300">
-            <div className="flex items-center space-x-3">
-              <Users className="h-5 w-5" />
-              <div className="text-left">
-                <div className="font-medium">Log Society Activity</div>
-                <div className="text-sm text-gray-300">Record participation and roles</div>
-              </div>
-            </div>
-          </Button>
-        </div>
-      </Card>
-
       {/* Recent Updates */}
       <Card className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 shadow-xl">
         <div className="flex items-center justify-between mb-4">
@@ -131,10 +95,6 @@ export default function ProfileForm() {
             );
           })}
         </div>
-        
-        <Button variant="link" className="w-full mt-4 text-gray-300 hover:text-white transition-colors duration-300">
-          View All Updates →
-        </Button>
       </Card>
     </div>
   );

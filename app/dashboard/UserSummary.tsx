@@ -202,7 +202,6 @@ export default function UserSummary() {
               />
             ))}
           </div>
-          <p className="text-sm font-semibold text-white">{typeof row?.stars === 'string' ? row?.stars : starsNumeric + '/5'}</p>
         </div>
       </Card>
     </div>
