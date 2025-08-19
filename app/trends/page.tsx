@@ -24,6 +24,11 @@ export default function TrendsPage() {
   const [corrLoading, setCorrLoading] = useState(true);
   const [corrError, setCorrError] = useState<string | null>(null);
   const [corrData, setCorrData] = useState<CorrPoint[]>([]);
+
+  // Additional Trend Metrics
+  const [metricGrowthPct, setMetricGrowthPct] = useState<number | null>(null);
+  const [metricInternPct, setMetricInternPct] = useState<number | null>(null);
+  const [metricAvgRating, setMetricAvgRating] = useState<number | null>(null);
   const [corrViz, setCorrViz] = useState<'buckets' | 'scatter'>('buckets');
 
   useEffect(() => {
@@ -68,6 +73,28 @@ export default function TrendsPage() {
         });
         setAvgData(data);
         setAvgError(null);
+
+        // Compute overall year-wise averages (Y0..Y3) to derive growth
+        const yearAgg: Record<number, { sum: number; count: number }> = { 0: { sum: 0, count: 0 }, 1: { sum: 0, count: 0 }, 2: { sum: 0, count: 0 }, 3: { sum: 0, count: 0 } };
+        (profiles || []).forEach((p: any) => {
+          const year = typeof p.current_year === 'number' ? p.current_year : null;
+          if (year === null || year < 0 || year > 3) return;
+          const score = rankByUser[p.user_id];
+          if (score === undefined) return;
+          yearAgg[year].sum += score; yearAgg[year].count += 1;
+        });
+        // Find latest year that has data, and its previous year
+        const yearsWith = [3,2,1,0].filter(y => yearAgg[y].count > 0);
+        if (yearsWith.length >= 2) {
+          const latest = yearsWith[0];
+          const prev = yearsWith.find(y => y < latest)!;
+          const latestAvg = Math.round(yearAgg[latest].sum / yearAgg[latest].count);
+          const prevAvg = Math.round(yearAgg[prev].sum / yearAgg[prev].count);
+          const growth = prevAvg > 0 ? ((latestAvg - prevAvg) / prevAvg) * 100 : 0;
+          setMetricGrowthPct(Math.round(growth));
+        } else {
+          setMetricGrowthPct(0);
+        }
       } catch (e) {
         setAvgError(e instanceof Error ? e.message : 'Failed to load averages');
       } finally {
@@ -133,6 +160,46 @@ export default function TrendsPage() {
     ];
     return { corrLabel: `Correlation (r): ${rStr}`, regressionLine };
   }, [corrData]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const loadMetrics = async () => {
+      try {
+        // Internships coverage
+        const [{ data: internRows, error: internErr }, { count: totalUsers, error: profErr }] = await Promise.all([
+          supabase.from('student_internships').select('user_id'),
+          supabase.from('student_profiles').select('user_id', { head: true, count: 'exact' }),
+        ]);
+        if (!internErr && typeof totalUsers === 'number' && totalUsers > 0) {
+          const uniq = new Set((internRows || []).map((r: any) => r.user_id));
+          setMetricInternPct(Math.round((uniq.size / totalUsers) * 100));
+        } else {
+          setMetricInternPct(null);
+        }
+
+        // Average rating
+        const { data: starRows, error: starErr } = await supabase
+          .from('student_rankings')
+          .select('stars');
+        if (!starErr && (starRows || []).length > 0) {
+          const starOf = (s: any): number => {
+            if (typeof s === 'number') return s;
+            if (typeof s === 'string') return (s.match(/★/g) || []).length;
+            return 0;
+          };
+          const nums = (starRows || []).map((r: any) => Math.max(0, Math.min(5, starOf(r.stars))));
+          const avg = nums.reduce((a, b) => a + b, 0) / (nums.length || 1);
+          setMetricAvgRating(Math.round(avg * 10) / 10);
+        } else {
+          setMetricAvgRating(null);
+        }
+      } catch {
+        setMetricInternPct(null);
+        setMetricAvgRating(null);
+      }
+    };
+    loadMetrics();
+  }, []);
 
   return (
     <div className="min-h-screen bg-black p-6">
@@ -325,34 +392,34 @@ export default function TrendsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 shadow-xl">
             <div className="text-center">
-              <div className="text-3xl font-bold text-white mb-2">+15%</div>
+              <div className="text-3xl font-bold text-white mb-2">{metricGrowthPct === null ? '—' : `${metricGrowthPct >= 0 ? '+' : ''}${metricGrowthPct}%`}</div>
               <div className="text-gray-400 text-sm mb-3">Average Score Growth</div>
               <div className="w-full bg-gray-800 rounded-full h-2">
-                <div className="bg-white h-2 rounded-full transition-all duration-500" style={{ width: '75%' }}></div>
+                <div className="bg-white h-2 rounded-full transition-all duration-500" style={{ width: `${Math.max(0, Math.min(100, (metricGrowthPct ?? 0) + 50))}%` }}></div>
               </div>
-              <div className="text-xs text-gray-400 mt-2">vs last semester</div>
+              <div className="text-xs text-gray-400 mt-2">latest year vs previous</div>
             </div>
           </Card>
 
           <Card className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 shadow-xl">
             <div className="text-center">
-              <div className="text-3xl font-bold text-white mb-2">85%</div>
+              <div className="text-3xl font-bold text-white mb-2">{metricInternPct === null ? '—' : `${metricInternPct}%`}</div>
               <div className="text-gray-400 text-sm mb-3">Students with Internships</div>
               <div className="w-full bg-gray-800 rounded-full h-2">
-                <div className="bg-white h-2 rounded-full transition-all duration-500" style={{ width: '85%' }}></div>
+                <div className="bg-white h-2 rounded-full transition-all duration-500" style={{ width: `${Math.max(0, Math.min(100, metricInternPct ?? 0))}%` }}></div>
               </div>
-              <div className="text-xs text-gray-400 mt-2">up from 72% last year</div>
+              <div className="text-xs text-gray-400 mt-2">share of profiles</div>
             </div>
           </Card>
 
           <Card className="bg-gradient-to-br from-black via-gray-900 to-black border border-gray-800 p-6 shadow-xl">
             <div className="text-center">
-              <div className="text-3xl font-bold text-white mb-2">4.2★</div>
+              <div className="text-3xl font-bold text-white mb-2">{metricAvgRating === null ? '—' : `${metricAvgRating}★`}</div>
               <div className="text-gray-400 text-sm mb-3">Average Rating</div>
               <div className="w-full bg-gray-800 rounded-full h-2">
-                <div className="bg-white h-2 rounded-full transition-all duration-500" style={{ width: '84%' }}></div>
+                <div className="bg-white h-2 rounded-full transition-all duration-500" style={{ width: `${Math.max(0, Math.min(100, ((metricAvgRating ?? 0) / 5) * 100))}%` }}></div>
               </div>
-              <div className="text-xs text-gray-400 mt-2">across all universities</div>
+              <div className="text-xs text-gray-400 mt-2">across all ranked students</div>
             </div>
           </Card>
         </div>
