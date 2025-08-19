@@ -6,7 +6,7 @@ import { TrendingUp } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 type CorrPoint = { internships: number; score: number };
-type AvgRow = { year: string; [university: string]: number };
+type AvgRow = { year: string } & { [university: string]: number | string };
 
 export default function TrendsPage() {
   // Average performance per university and year
