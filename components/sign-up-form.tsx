@@ -168,6 +168,11 @@ export function SignUpForm({
     return { months: totalMonths, year: sy };
   };
 
+  const getCalculatedMonths = (item: InternshipItem): number | null => {
+    const comp = computeMonthsAndYear(item.start_month, item.end_month, item.current);
+    return comp ? comp.months : null;
+  };
+
   const addSocietyRole = () => {
     setSocietyRoles([...societyRoles, { role_title: "", society_size: "", years_ago: 0 }]);
   };
@@ -695,6 +700,10 @@ export function SignUpForm({
                               </SelectContent>
                             </Select>
                           </div>
+                        </div>
+                        <div className="mt-2">
+                          <span className="text-xs text-muted-foreground">Calculated months: </span>
+                          <span className="text-sm font-medium">{getCalculatedMonths(internship) ?? '—'}</span>
                         </div>
                         <div className="mt-2 flex items-center gap-2">
                           <Checkbox id={`current-${index}`} checked={!!internship.current} onCheckedChange={(v)=>updateInternship(index, "current", !!v)} />

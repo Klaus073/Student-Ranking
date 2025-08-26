@@ -186,6 +186,11 @@ export default function ProfilePage() {
     return { months: totalMonths, year: sy };
   };
 
+  const getCalculatedMonths = (startMonth: string, endMonth: string, isCurrent: boolean): number | null => {
+    const comp = computeMonthsAndYear(startMonth, endMonth, isCurrent);
+    return comp ? comp.months : null;
+  };
+
   const createInternship = async () => {
     if (!newInternship) return;
     setSaving(true);
@@ -711,6 +716,9 @@ export default function ProfilePage() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            <div className="text-sm text-gray-300">
+              Calculated months: <span className="font-medium text-white/90">{getCalculatedMonths(newInternship.start_month, newInternship.end_month, newInternship.current) ?? '—'}</span>
             </div>
             <div className="flex items-center gap-2 pt-1">
               <Checkbox id="current-internship" checked={!!newInternship.current} onCheckedChange={(v)=>setNewInternship(prev=>({...(prev as any), current: !!v}))} />
