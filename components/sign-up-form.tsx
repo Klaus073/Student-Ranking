@@ -17,16 +17,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MultiSelect } from "@/components/ui/multi-select";
+import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CFG } from "@/lib/cfg";
 import { PlusIcon, XIcon } from "lucide-react";
+import { SearchSelect } from "@/components/ui/search-select";
+import mappings from "@/data/mappings.json";
 
 interface InternshipItem {
-  tier: string; // "1" | "2" | "3"
-  months: number; // 1..12
-  year: number; // 2020..2030
+  company: string;
+  job_class: string;
+  start_month: string; // YYYY-MM
+  end_month: string;   // YYYY-MM or ""
+  current: boolean;
+  employment_type: "full time" | "part time" | "";
 }
 
 interface SocietyRoleItem {
@@ -57,9 +63,7 @@ export function SignUpForm({
   const [gcseSubjects, setGcseSubjects] = useState<string[]>([]);
   const [awards, setAwards] = useState(0);
   const [certifications, setCertifications] = useState(0);
-  const [bankInternshipTier, setBankInternshipTier] = useState("");
-  const [industryExposure, setIndustryExposure] = useState("");
-  const [monthsOfExperience, setMonthsOfExperience] = useState(0);
+  // Removed legacy bank/industry/months inputs in favor of detailed internships template
   
   // Dynamic sections
   const [internships, setInternships] = useState<InternshipItem[]>([]);
@@ -93,17 +97,75 @@ export function SignUpForm({
   };
 
   const addInternship = () => {
-    setInternships([...internships, { tier: "", months: 1, year: 2024 }]);
+    setInternships([
+      ...internships,
+      { company: "", job_class: "", start_month: "", end_month: "", current: false, employment_type: "" },
+    ]);
   };
 
   const removeInternship = (index: number) => {
     setInternships(internships.filter((_, i) => i !== index));
   };
 
-  const updateInternship = (index: number, field: keyof InternshipItem, value: string | number) => {
-    const updated = [...internships];
-    updated[index] = { ...updated[index], [field]: value };
-    setInternships(updated);
+  const updateInternship = (index: number, field: keyof InternshipItem, value: string | boolean) => {
+    setInternships((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value } as InternshipItem;
+      return updated;
+    });
+  };
+
+  const updateInternshipFields = (index: number, partial: Partial<InternshipItem>) => {
+    setInternships((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], ...partial } as InternshipItem;
+      return updated;
+    });
+  };
+
+  const allCompanies = Object.keys(mappings as Record<string, any>).
+    sort((a, b) => a.localeCompare(b));
+
+  const getClassesForCompany = (company: string): string[] => {
+    if (!company || !(mappings as any)[company]) return [];
+    const arr = ((mappings as any)[company] as Array<{ class: string }>);
+    const unique = Array.from(new Set(arr.map((x) => x.class)));
+    return unique.sort((a, b) => a.localeCompare(b));
+  };
+
+  const formatClassLabel = (raw: string): string => {
+    // Known overrides for nicer formatting
+    const overrides: Record<string, string> = {
+      banking: "Banking",
+      markets: "Markets",
+      asset_management: "Asset Management",
+      private_markets: "Private Markets",
+      hedge_funds: "Hedge Funds",
+    };
+    if (overrides[raw]) return overrides[raw];
+    // Replace underscores with spaces and title-case words
+    const replaced = raw.replace(/_/g, " ");
+    return replaced.replace(/\b\w+/g, (w) => w.charAt(0).toUpperCase() + w.slice(1));
+  };
+
+  const EMPLOYMENT_TYPES: { value: "full time" | "part time"; label: string }[] = [
+    { value: "full time", label: "Full time" },
+    { value: "part time", label: "Part time" },
+  ];
+
+  const computeMonthsAndYear = (startMonth: string, endMonth: string, isCurrent: boolean): { months: number; year: number } | null => {
+    if (!startMonth) return null;
+    const [sy, sm] = startMonth.split("-").map((x) => parseInt(x));
+    const start = new Date(sy, (sm || 1) - 1, 1);
+    const endDateRef = (() => {
+      if (isCurrent || !endMonth) return new Date();
+      const [ey, em] = endMonth.split("-").map((x) => parseInt(x));
+      return new Date(ey, (em || 1) - 1, 1);
+    })();
+    const years = endDateRef.getFullYear() - start.getFullYear();
+    const months = endDateRef.getMonth() - start.getMonth() + years * 12;
+    const totalMonths = Math.max(1, months + 1); // inclusive months
+    return { months: totalMonths, year: sy };
   };
 
   const addSocietyRole = () => {
@@ -151,13 +213,7 @@ export function SignUpForm({
       return;
     }
 
-    // University required only if year 1-3
     const cy = parseInt(currentYear);
-    if ((cy === 1 || cy === 2 || cy === 3) && !university) {
-      setError("Please select your university");
-      setIsLoading(false);
-      return;
-    }
 
     if (!alevelBand) {
       setError("Please select your A-Level band");
@@ -177,32 +233,38 @@ export function SignUpForm({
       return;
     }
 
-    if (!bankInternshipTier) {
-      setError("Please select your bank internship tier");
-      setIsLoading(false);
-      return;
-    }
+    // Removed legacy bank/industry validations
 
-    if (!industryExposure) {
-      setError("Please select your industry exposure");
-      setIsLoading(false);
-      return;
-    }
-
-    // Validate internships
+    // Validate internships (new template)
     for (const i of internships) {
-      if (!i.tier || !["1", "2", "3"].includes(i.tier)) {
-        setError("Each internship must have a valid tier (Tier 1, 2, or 3)");
+      if (!i.company) {
+        setError("Each internship must have a company selected");
         setIsLoading(false);
         return;
       }
-      if (!i.months || i.months < 1 || i.months > 12) {
-        setError("Each internship must have months between 1 and 12");
+      if (!i.job_class) {
+        setError("Each internship must have a class selected");
         setIsLoading(false);
         return;
       }
-      if (!i.year || i.year < 2020 || i.year > 2030) {
-        setError("Each internship must have a year between 2020 and 2030");
+      if (!i.start_month) {
+        setError("Each internship must have a start month");
+        setIsLoading(false);
+        return;
+      }
+      if (!i.current && !i.end_month) {
+        setError("Provide an end month or mark as currently working");
+        setIsLoading(false);
+        return;
+      }
+      if (!i.employment_type) {
+        setError("Please select employment type (full time or part time)");
+        setIsLoading(false);
+        return;
+      }
+      const comp = computeMonthsAndYear(i.start_month, i.end_month, i.current);
+      if (!comp || !comp.months) {
+        setError("Invalid dates provided for internship");
         setIsLoading(false);
         return;
       }
@@ -241,7 +303,7 @@ export function SignUpForm({
       const signupData = {
         full_name: name.trim(),
         current_year: currentYear,
-        university: cy === 0 ? null : university,
+        university: university || null,
         alevel_band: alevelBand,
         gcse_band: gcseBand,
         uni_grades_band: shouldShowUniGrades() ? uniGradesBand : null,
@@ -249,10 +311,12 @@ export function SignUpForm({
         gcses: gcseSubjects,
         awards,
         certifications,
-        bank_internship_tier: bankInternshipTier,
-        industry_exposure: industryExposure,
-        months_of_experience: monthsOfExperience,
-        internships: internships.map(i => ({ tier: i.tier, months: i.months, year: i.year })),
+        // Legacy summary fields removed; internships below capture detailed info
+        // Persist legacy fields derived from new template
+        internships: internships.map(i => {
+          const comp = computeMonthsAndYear(i.start_month, i.end_month, i.current)!;
+          return { tier: "1", months: comp.months, year: comp.year };
+        }),
         society_roles: societyRoles.map(r => ({ role_title: r.role_title, society_size: r.society_size, years_ago: r.years_ago })),
       };
 
@@ -413,22 +477,20 @@ export function SignUpForm({
                 </div>
               </div>
 
-              {/* University - required only for years 1–3 */}
-              {(parseInt(currentYear) === 1 || parseInt(currentYear) === 2 || parseInt(currentYear) === 3) && (
-                <div className="space-y-2">
-                  <Label className="text-base font-medium">University</Label>
-                  <Select value={university} onValueChange={setUniversity}>
-                    <SelectTrigger className="h-11 w-full">
-                      <SelectValue placeholder="Select your university" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {['Oxford', 'Cambridge', 'LSE', 'Imperial', 'Warwick', 'Non-Target'].map((uni) => (
-                        <SelectItem key={uni} value={uni}>{uni}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
+              {/* University (always visible, optional) */}
+              <div className="space-y-2">
+                <Label className="text-base font-medium">University</Label>
+                <Select value={university} onValueChange={setUniversity}>
+                  <SelectTrigger className="h-11 w-full">
+                    <SelectValue placeholder="Select your university (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {['Oxford', 'Cambridge', 'LSE', 'Imperial', 'Warwick', 'Non-Target'].map((uni) => (
+                      <SelectItem key={uni} value={uni}>{uni}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </CardContent>
           </Card>
         </section>
@@ -516,7 +578,7 @@ export function SignUpForm({
           </Card>
         </section>
 
-        {/* SECTION 4: Experience (base) */}
+        {/* SECTION 4: Experience (new template) */}
         <section>
           <div className="flex items-center mb-6">
             <div className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-sm font-semibold mr-3">
@@ -530,64 +592,18 @@ export function SignUpForm({
           
           <Card className="w-full">
             <CardContent className="p-6 space-y-6">
-              {/* Row 1: Bank Internship Tier and Industry Exposure (side by side, 50/50) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="bank-tier" className="text-base font-medium">Bank Internship Tier</Label>
-                  <Select value={bankInternshipTier} onValueChange={setBankInternshipTier}>
-                    <SelectTrigger className="h-11 w-full">
-                      <SelectValue placeholder="Select bank tier (if applicable)" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {['Bulge', 'Elite', 'Mid', 'UpperMid', 'LowerMid', 'Boutique', 'N/A'].map(tier => (
-                        <SelectItem key={tier} value={tier}>{tier}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="industry-exposure" className="text-base font-medium">Industry Exposure</Label>
-                  <Select value={industryExposure} onValueChange={setIndustryExposure}>
-                    <SelectTrigger className="h-11 w-full">
-                      <SelectValue placeholder="Select your experience level" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {['Direct', 'Related', 'General', 'None'].map(exposure => (
-                        <SelectItem key={exposure} value={exposure}>{exposure}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Row 2: Months of Experience (50% width) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="months-experience" className="text-base font-medium">Months of Experience</Label>
-                  <Input
-                    id="months-experience"
-                    type="number"
-                    min="0"
-                    placeholder="0"
-                    value={monthsOfExperience}
-                    onChange={(e) => setMonthsOfExperience(parseInt(e.target.value) || 0)}
-                    className="h-11"
-                  />
-                </div>
-              </div>
-
-              {/* Horizontal line separator */}
-              <div className="border-t border-border my-6"></div>
+              {/* New internship entries only */}
 
               {/* SUB-SECTION: Internships (repeatable list) */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold">Internships</h3>
-                  <Button type="button" variant="outline" size="sm" onClick={addInternship}>
-                    <PlusIcon className="h-4 w-4 mr-2" />
-                    Add Internship
-                  </Button>
+                  {internships.length > 0 && (
+                    <Button type="button" variant="outline" size="sm" onClick={addInternship}>
+                      <PlusIcon className="h-4 w-4 mr-2" />
+                      Add Internship
+                    </Button>
+                  )}
                 </div>
 
                 {internships.length === 0 ? (
@@ -613,48 +629,76 @@ export function SignUpForm({
                             <XIcon className="h-4 w-4" />
                           </Button>
                         </div>
-                        
-                        {/* 3 columns: 50%, 25%, 25% */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                          <div className="md:col-span-2 space-y-2">
-                            <Label className="text-sm font-medium">Internship Tier</Label>
-                            <Select value={internship.tier} onValueChange={(value) => updateInternship(index, "tier", value)}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium">Company</Label>
+                            <SearchSelect
+                              options={allCompanies}
+                              value={internship.company}
+                              onChange={(val) => {
+                                updateInternshipFields(index, { company: val, job_class: "" });
+                              }}
+                              placeholder="Search company"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium">Class</Label>
+                            <Select
+                              value={internship.job_class}
+                              onValueChange={(val) => updateInternship(index, "job_class", val)}
+                              disabled={!internship.company}
+                            >
                               <SelectTrigger className="h-10 w-full">
-                                <SelectValue placeholder="Select tier" />
+                                <SelectValue placeholder={internship.company ? "Select class" : "Select company first"} />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="1">Tier 1 (Top)</SelectItem>
-                                <SelectItem value="2">Tier 2</SelectItem>
-                                <SelectItem value="3">Tier 3</SelectItem>
+                                {getClassesForCompany(internship.company).map((c) => (
+                                  <SelectItem key={c} value={c}>{formatClassLabel(c)}</SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                           </div>
-                          
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
                           <div className="space-y-2">
-                            <Label className="text-sm font-medium">Months</Label>
+                            <Label className="text-sm font-medium">Start Date</Label>
                             <Input
-                              type="number"
-                              min="1"
-                              max="12"
-                              placeholder="3"
-                              value={internship.months}
-                              onChange={(e) => updateInternship(index, "months", parseInt(e.target.value) || 0)}
+                              type="month"
+                              value={internship.start_month}
+                              onChange={(e) => updateInternship(index, "start_month", e.target.value)}
                               className="h-10"
                             />
                           </div>
-                          
                           <div className="space-y-2">
-                            <Label className="text-sm font-medium">Year</Label>
+                            <Label className="text-sm font-medium">End Date</Label>
                             <Input
-                              type="number"
-                              min="2020"
-                              max="2030"
-                              placeholder="2024"
-                              value={internship.year}
-                              onChange={(e) => updateInternship(index, "year", parseInt(e.target.value) || 0)}
+                              type="month"
+                              value={internship.end_month}
+                              onChange={(e) => updateInternship(index, "end_month", e.target.value)}
                               className="h-10"
+                              disabled={!!internship.current}
                             />
                           </div>
+                          <div className="space-y-2">
+                            <Label className="text-sm font-medium">Employment Type</Label>
+                            <Select
+                              value={internship.employment_type}
+                              onValueChange={(val) => updateInternship(index, "employment_type", val)}
+                            >
+                              <SelectTrigger className="h-10 w-full">
+                                <SelectValue placeholder="Select type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {EMPLOYMENT_TYPES.map((opt) => (
+                                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <div className="mt-2 flex items-center gap-2">
+                          <Checkbox id={`current-${index}`} checked={!!internship.current} onCheckedChange={(v)=>updateInternship(index, "current", !!v)} />
+                          <Label htmlFor={`current-${index}`} className="text-sm">Currently working here</Label>
                         </div>
                       </div>
                     ))}
@@ -715,10 +759,12 @@ export function SignUpForm({
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold">Society Roles</h3>
-                  <Button type="button" variant="outline" size="sm" onClick={addSocietyRole}>
-                    <PlusIcon className="h-4 w-4 mr-2" />
-                    Add Society Role
-                  </Button>
+                  {societyRoles.length > 0 && (
+                    <Button type="button" variant="outline" size="sm" onClick={addSocietyRole}>
+                      <PlusIcon className="h-4 w-4 mr-2" />
+                      Add Society Role
+                    </Button>
+                  )}
                 </div>
 
                 {societyRoles.length === 0 ? (
