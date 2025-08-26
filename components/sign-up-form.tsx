@@ -215,7 +215,7 @@ export function SignUpForm({
         setIsLoading(false);
         return;
       }
-      if (r.society_size && !["small", "medium", "large"].includes(r.society_size)) {
+      if (r.society_size && !["small", "medium", "large", "mega"].includes(r.society_size)) {
         setError("Each society role must have a valid size");
         setIsLoading(false);
         return;
@@ -768,9 +768,10 @@ export function SignUpForm({
                                 <SelectValue placeholder="Select size" />
                               </SelectTrigger>
                               <SelectContent>
-                                {['small', 'medium', 'large'].map((size) => (
-                                  <SelectItem key={size} value={size}>{size}</SelectItem>
-                                ))}
+                                <SelectItem value="small">Small (Up to 50 members)</SelectItem>
+                                <SelectItem value="medium">Medium (51–149 members)</SelectItem>
+                                <SelectItem value="large">Large (150–399 members)</SelectItem>
+                                <SelectItem value="mega">Mega (400+ members)</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>

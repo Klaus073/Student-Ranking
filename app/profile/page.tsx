@@ -516,7 +516,10 @@ export default function ProfilePage() {
                           <Select value={editingRole?.society_size || ""} onValueChange={(v)=>setEditingRole(prev=>({...prev!, society_size: v}))}>
                             <SelectTrigger className="mt-1"><SelectValue placeholder="Select"/></SelectTrigger>
                             <SelectContent>
-                              {['small','medium','large'].map(s => (<SelectItem key={s} value={s}>{s}</SelectItem>))}
+                              <SelectItem value="small">Small (Up to 50 members)</SelectItem>
+                              <SelectItem value="medium">Medium (51–149 members)</SelectItem>
+                              <SelectItem value="large">Large (150–399 members)</SelectItem>
+                              <SelectItem value="mega">Mega (400+ members)</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -704,7 +707,10 @@ export default function ProfilePage() {
               <Select value={newRole.society_size} onValueChange={(v)=>setNewRole(prev=>({...(prev as any), society_size: v}))}>
                 <SelectTrigger className="mt-1"><SelectValue placeholder="Select"/></SelectTrigger>
                 <SelectContent>
-                  {['small','medium','large'].map(s => (<SelectItem key={s} value={s}>{s}</SelectItem>))}
+                  <SelectItem value="small">Small (Up to 50 members)</SelectItem>
+                  <SelectItem value="medium">Medium (51–149 members)</SelectItem>
+                  <SelectItem value="large">Large (150–399 members)</SelectItem>
+                  <SelectItem value="mega">Mega (400+ members)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
