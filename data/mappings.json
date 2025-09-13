@@ -1,0 +1,934 @@
+{
+
+    "Goldman Sachs": [
+    { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+    { "class": "banking", "score": 20, "class_max": 20 },
+    { "class": "markets", "score": 20, "class_max": 20 }
+    ],
+    "J.P. Morgan": [
+    { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+    { "class": "banking", "score": 20, "class_max": 20 },
+    { "class": "markets", "score": 20, "class_max": 20 }
+    ],
+    "Morgan Stanley": [
+    { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+    { "class": "banking", "score": 20, "class_max": 20 },
+    { "class": "markets", "score": 20, "class_max": 20 }
+    ],
+    "Citi": [
+    { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+    { "class": "banking", "score": 20, "class_max": 20 },
+    { "class": "markets", "score": 20, "class_max": 20 }
+    ],
+    "Bank of America": [
+    { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+    { "class": "banking", "score": 20, "class_max": 20 },
+    { "class": "markets", "score": 20, "class_max": 20 }
+    ],
+    "Barclays": [
+    { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+    { "class": "banking", "score": 20, "class_max": 20 },
+    { "class": "markets", "score": 20, "class_max": 20 }
+    ],
+    "UBS": [
+    { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+    { "class": "banking", "score": 20, "class_max": 20 },
+    { "class": "markets", "score": 20, "class_max": 20 }
+    ],
+    "Deutsche Bank": [
+    { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+    { "class": "banking", "score": 20, "class_max": 20 },
+    { "class": "markets", "score": 20, "class_max": 20 }
+    ],
+    "Evercore": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 19, "class_max": 20 }
+    ],
+    "Lazard": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 19, "class_max": 20 }
+    ],
+    "Centerview Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 19, "class_max": 20 }
+    ],
+    "Moelis & Company": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 19, "class_max": 20 }
+    ],
+    "PJT Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 19, "class_max": 20 }
+    ],
+    "Perella Weinberg Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 19, "class_max": 20 }
+    ],
+    "Rothschild & Co. (Global Advisory/UK M&A)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 19, "class_max": 20 }
+    ],
+    "Robey Warshaw": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 19, "class_max": 20 }
+    ],
+    "Qatalyst Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 19, "class_max": 20 }
+    ],
+    "Zaoui & Co.": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 19, "class_max": 20 }
+    ],
+    "LionTree Advisors": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 19, "class_max": 20 }
+    ],
+    
+    "Jefferies": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 17, "class_max": 20 },
+      { "class": "markets", "score": 17, "class_max": 20 }
+    ],
+    "Houlihan Lokey": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 17, "class_max": 20 }
+    ],
+    "Raymond James": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 17, "class_max": 20 }
+    ],
+    "Baird": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 17, "class_max": 20 }
+    ],
+    "Harris Williams": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 17, "class_max": 20 }
+    ],
+    "Lincoln International": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 17, "class_max": 20 }
+    ],
+    "Piper Sandler": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 17, "class_max": 20 }
+    ],
+    "William Blair": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 17, "class_max": 20 }
+    ],
+    "ING": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 17, "class_max": 20 }
+    ],
+    "TD Securities": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 17, "class_max": 20 }
+    ],
+    
+    "Nomura": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 },
+      { "class": "markets", "score": 19, "class_max": 20 }
+    ],
+    "Mizuho": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 },
+      { "class": "markets", "score": 19, "class_max": 20 }
+    ],
+    "BNP Paribas": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 },
+      { "class": "markets", "score": 19, "class_max": 20 }
+    ],
+    "Credit Agricole (CIB)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 },
+      { "class": "markets", "score": 19, "class_max": 20 }
+    ],
+    "Societe Generale (Global Markets)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 },
+      { "class": "markets", "score": 19, "class_max": 20 }
+    ],
+    "RBC Capital Markets": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 },
+      { "class": "markets", "score": 19, "class_max": 20 }
+    ],
+    "HSBC (Global Banking & Markets)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 },
+      { "class": "markets", "score": 19, "class_max": 20 }
+    ],
+    "MUFG Securities": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 },
+      { "class": "markets", "score": 17, "class_max": 20 }
+    ],
+    "SMBC Nikko Securities": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 },
+      { "class": "markets", "score": 17, "class_max": 20 }
+    ],
+    "BMO Capital Markets": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 },
+      { "class": "markets", "score": 17, "class_max": 20 }
+    ],
+    "Scotiabank (Global Banking and Markets)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 },
+      { "class": "markets", "score": 17, "class_max": 20 }
+    ],
+    "KeyBanc Capital Markets": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 15, "class_max": 20 }
+    ],
+    
+    "DC Advisory": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 13, "class_max": 20 }
+    ],
+    "Alvarez & Marsal (Transaction Advisory)": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 },
+      { "class": "banking", "score": 13, "class_max": 20 }
+    ],
+    "Arma Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 13, "class_max": 20 }
+    ],
+    "Peel Hunt": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 13, "class_max": 20 }
+    ],
+    "Liberum Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 13, "class_max": 20 }
+    ],
+    "Greenhill & Co.": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "banking", "score": 13, "class_max": 20 }
+    ],
+    
+    "Macquarie (Commodities and Global Markets)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 17, "class_max": 20 }
+    ],
+    "Optiver": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 15, "class_max": 20 }
+    ],
+    "Jane Street": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 15, "class_max": 20 }
+    ],
+    "DRW Trading": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 15, "class_max": 20 }
+    ],
+    "IMC Trading": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 15, "class_max": 20 }
+    ],
+    "Flow Traders": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 15, "class_max": 20 }
+    ],
+    "Hudson River Trading": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 15, "class_max": 20 }
+    ],
+    "SIG (Susquehanna International Group)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 15, "class_max": 20 }
+    ],
+    "Hargreaves Lansdown": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 9, "class_max": 20 },
+      { "class": "asset_management", "score": 9, "class_max": 20 }
+    ],
+    "AJ Bell": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 9, "class_max": 20 },
+      { "class": "asset_management", "score": 9, "class_max": 20 }
+    ],
+    "Nutmeg (Trading Desk)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 9, "class_max": 20 }
+    ],
+    "Interactive Investor": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "markets", "score": 9, "class_max": 20 }
+    ],
+    
+    "BlackRock": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 20, "class_max": 20 }
+    ],
+    "PIMCO": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 20, "class_max": 20 }
+    ],
+    "Fidelity International": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 20, "class_max": 20 }
+    ],
+    "Capital Group": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 20, "class_max": 20 }
+    ],
+    "Wellington Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 20, "class_max": 20 }
+    ],
+    "Amundi": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 20, "class_max": 20 }
+    ],
+    "J.P. Morgan Asset Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 20, "class_max": 20 }
+    ],
+    "Goldman Sachs Asset Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 20, "class_max": 20 }
+    ],
+    "Morgan Stanley Investment Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 20, "class_max": 20 }
+    ],
+    "T. Rowe Price": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 20, "class_max": 20 }
+    ],
+    "Schroders": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 20, "class_max": 20 }
+    ],
+    
+    "MFS Investment Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 19, "class_max": 20 }
+    ],
+    "Invesco": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 19, "class_max": 20 }
+    ],
+    "Northern Trust Asset Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 19, "class_max": 20 }
+    ],
+    "AllianceBernstein": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 19, "class_max": 20 }
+    ],
+    "Franklin Templeton": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 19, "class_max": 20 }
+    ],
+    "Dimensional Fund Advisors": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 19, "class_max": 20 }
+    ],
+    "Vanguard": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 19, "class_max": 20 }
+    ],
+    "UBS Asset Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 19, "class_max": 20 }
+    ],
+    "Neuberger Berman": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 19, "class_max": 20 }
+    ],
+    "Aegon Asset Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 19, "class_max": 20 }
+    ],
+    
+    "Baillie Gifford": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 17, "class_max": 20 }
+    ],
+    "Lazard Asset Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 17, "class_max": 20 }
+    ],
+    "Janus Henderson Investors": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 17, "class_max": 20 }
+    ],
+    "Man Group (AHL/Beta Strategies)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 17, "class_max": 20 }
+    ],
+    "LGIM (Legal & General Investment Management)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 17, "class_max": 20 }
+    ],
+    "Ninety One": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 17, "class_max": 20 }
+    ],
+    "Loomis Sayles": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 17, "class_max": 20 }
+    ],
+    "Eaton Vance": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 17, "class_max": 20 }
+    ],
+    "GAM Investments": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 17, "class_max": 20 }
+    ],
+    "Natixis IM": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 17, "class_max": 20 }
+    ],
+    
+    "Ruffer LLP": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 15, "class_max": 20 }
+    ],
+    "BlueBay Asset Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 15, "class_max": 20 }
+    ],
+    "Sarasin & Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 15, "class_max": 20 }
+    ],
+    "Artemis Investment Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 15, "class_max": 20 }
+    ],
+    "Jupiter Asset Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 15, "class_max": 20 }
+    ],
+    "JO Hambro Capital Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 15, "class_max": 20 }
+    ],
+    "Polar Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 15, "class_max": 20 },
+      { "class": "hedge_funds", "score": 17, "class_max": 20 }
+    ],
+    "Liontrust": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 15, "class_max": 20 }
+    ],
+    "River and Mercantile": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 15, "class_max": 20 }
+    ],
+    "Federated Hermes": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 15, "class_max": 20 }
+    ],
+    
+    "Nutmeg": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 9, "class_max": 20 }
+    ],
+    "Moneybox": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 9, "class_max": 20 }
+    ],
+    "Wealthify": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 9, "class_max": 20 }
+    ],
+    "St. James's Place": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 9, "class_max": 20 }
+    ],
+    "Brewin Dolphin": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 9, "class_max": 20 }
+    ],
+    "Tilney Smith & Williamson": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "asset_management", "score": 9, "class_max": 20 }
+    ],
+    
+    "Blackstone": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    "KKR": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    "Carlyle": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    "Bain Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    "Advent International": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    "Apollo Global Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    "CVC Capital Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    "EQT": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    "TPG Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    "Brookfield Asset Management (Infrastructure)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    "Macquarie Infrastructure and Real Assets (MIRA)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    "Ares Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 20, "class_max": 20 }
+    ],
+    
+    "Ardian": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 19, "class_max": 20 }
+    ],
+    "Partners Group": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 19, "class_max": 20 }
+    ],
+    "Intermediate Capital Group (ICG)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 19, "class_max": 20 }
+    ],
+    "Permira": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 19, "class_max": 20 }
+    ],
+    "Cinven": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 19, "class_max": 20 }
+    ],
+    "Bridgepoint": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 19, "class_max": 20 }
+    ],
+    "Hg Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 19, "class_max": 20 }
+    ],
+    "Lexington Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 19, "class_max": 20 }
+    ],
+    "Oak Hill Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 19, "class_max": 20 }
+    ],
+    
+    "BC Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 17, "class_max": 20 }
+    ],
+    "PAI Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 17, "class_max": 20 }
+    ],
+    "Charterhouse Capital Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 17, "class_max": 20 }
+    ],
+    "Montagu Private Equity": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 17, "class_max": 20 }
+    ],
+    "Inflexion Private Equity": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 17, "class_max": 20 }
+    ],
+    "Triton Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 17, "class_max": 20 }
+    ],
+    "Antin Infrastructure Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 17, "class_max": 20 }
+    ],
+    "Pantheon Ventures": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 17, "class_max": 20 }
+    ],
+    "HIG Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 17, "class_max": 20 }
+    ],
+    "HPS": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 17, "class_max": 20 }
+    ],
+    
+    "NorthEdge Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 15, "class_max": 20 }
+    ],
+    "Livingbridge": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 15, "class_max": 20 }
+    ],
+    "LDC (Lloyds Development Capital)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 15, "class_max": 20 }
+    ],
+    "Bowmark Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 15, "class_max": 20 }
+    ],
+    "Graphite Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 15, "class_max": 20 }
+    ],
+    "Altor Equity Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 15, "class_max": 20 }
+    ],
+    "Foresight Group": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 15, "class_max": 20 }
+    ],
+    
+    "Google Ventures (GV)": [
+      { "class": "General Corporate Business Exposure", "score": 22, "class_max": 30 },
+      { "class": "private_markets", "score": 9, "class_max": 20 }
+    ],
+    "Amazon Alexa Fund": [
+      { "class": "General Corporate Business Exposure", "score": 22, "class_max": 30 },
+      { "class": "private_markets", "score": 9, "class_max": 20 }
+    ],
+    "LocalGlobe": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 9, "class_max": 20 }
+    ],
+    "Balderton Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 9, "class_max": 20 }
+    ],
+    "Seedcamp": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 9, "class_max": 20 }
+    ],
+    "Accel": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 9, "class_max": 20 }
+    ],
+    "Index Ventures": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "private_markets", "score": 9, "class_max": 20 }
+    ],
+    
+    "Citadel": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 20, "class_max": 20 }
+    ],
+    "Millennium Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 20, "class_max": 20 }
+    ],
+    "Point72": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 20, "class_max": 20 }
+    ],
+    "DE Shaw Group": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 20, "class_max": 20 }
+    ],
+    "Two Sigma": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 20, "class_max": 20 }
+    ],
+    "AQR Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 20, "class_max": 20 }
+    ],
+    "Bridgewater Associates": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 20, "class_max": 20 }
+    ],
+    "Brevan Howard": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 20, "class_max": 20 }
+    ],
+    "Marshall Wace": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 20, "class_max": 20 }
+    ],
+    "Balyasny Asset Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 20, "class_max": 20 }
+    ],
+    "Man Group (GLG/Quant focus)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 20, "class_max": 20 }
+    ],
+    
+    "Davidson Kempner": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 19, "class_max": 20 }
+    ],
+    "Elliott Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 19, "class_max": 20 }
+    ],
+    "Anchorage Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 19, "class_max": 20 }
+    ],
+    "BlueMountain Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 19, "class_max": 20 }
+    ],
+    "Capula Investment Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 19, "class_max": 20 }
+    ],
+    "Hudson Bay Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 19, "class_max": 20 }
+    ],
+    "Rokos Capital Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 19, "class_max": 20 }
+    ],
+    "ExodusPoint Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 19, "class_max": 20 }
+    ],
+    
+    "RWC Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 17, "class_max": 20 }
+    ],
+    "Pelham Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 17, "class_max": 20 }
+    ],
+    "Algebris Investments": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 17, "class_max": 20 }
+    ],
+    "Cheyne Capital": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 17, "class_max": 20 }
+    ],
+    "Odey Asset Management (selected desks)": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 17, "class_max": 20 }
+    ],
+    "CQS": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 17, "class_max": 20 }
+    ],
+    "TT International": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 17, "class_max": 20 }
+    ],
+    
+    "Systematica Investments": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 15, "class_max": 20 }
+    ],
+    "Fulcrum Asset Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 15, "class_max": 20 }
+    ],
+    "Kairos Partners": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 15, "class_max": 20 }
+    ],
+    "Parvus Asset Management": [
+      { "class": "Core Finance, Banking, and Investment Industry", "score": 30, "class_max": 30 },
+      { "class": "hedge_funds", "score": 15, "class_max": 20 }
+    ],
+    
+    "NatWest (retail roles)": [
+      { "class": "Retail Banking / Insurance / Broader Financial Services", "score": 18, "class_max": 30 }
+    ],
+    "Barclays Retail": [
+      { "class": "Retail Banking / Insurance / Broader Financial Services", "score": 18, "class_max": 30 }
+    ],
+    "Santander (retail roles)": [
+      { "class": "Retail Banking / Insurance / Broader Financial Services", "score": 18, "class_max": 30 }
+    ],
+    "AXA": [
+      { "class": "Retail Banking / Insurance / Broader Financial Services", "score": 18, "class_max": 30 }
+    ],
+    "Aviva": [
+      { "class": "Retail Banking / Insurance / Broader Financial Services", "score": 18, "class_max": 30 }
+    ],
+    "Zurich": [
+      { "class": "Retail Banking / Insurance / Broader Financial Services", "score": 18, "class_max": 30 }
+    ],
+    
+    "Deloitte": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "PwC": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "EY": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "KPMG": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "EY-Parthenon": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "PwC Deals": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "McKinsey": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "Bain": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "Boston Consulting Group": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "Oliver Wyman": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "LEK": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "Linklaters": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "Freshfields": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "Grant Thornton": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "BDO": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    "Mazars": [
+      { "class": "Professional Services / Finance-Adjacent Industries", "score": 26, "class_max": 30 }
+    ],
+    
+    "Amazon": [
+      { "class": "General Corporate Business Exposure", "score": 22, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    "Google": [
+      { "class": "General Corporate Business Exposure", "score": 22, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    "Unilever": [
+      { "class": "General Corporate Business Exposure", "score": 22, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    "Shell": [
+      { "class": "General Corporate Business Exposure", "score": 22, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    "BP": [
+      { "class": "General Corporate Business Exposure", "score": 22, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    "Rolls Royce": [
+      { "class": "General Corporate Business Exposure", "score": 22, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    "Revolut": [
+      { "class": "Retail Banking / Insurance / Broader Financial Services", "score": 18, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    "Monzo": [
+      { "class": "Retail Banking / Insurance / Broader Financial Services", "score": 18, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    "Starling Bank": [
+      { "class": "Retail Banking / Insurance / Broader Financial Services", "score": 18, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    "Wise (TransferWise)": [
+      { "class": "Retail Banking / Insurance / Broader Financial Services", "score": 18, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    "Checkout.com": [
+      { "class": "General Corporate Business Exposure", "score": 22, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    "Klarna": [
+      { "class": "General Corporate Business Exposure", "score": 22, "class_max": 30 },
+      { "class": "banking", "score": 9, "class_max": 20 }
+    ],
+    
+    "Tesco": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "Sainsbury's": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "Zara": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "Boots": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "McDonald's": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "Costa Coffee": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "Starbucks": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "H&M": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "Premier Inn": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "Holiday Inn": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "Aldi": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "Waitrose": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    "JD Sports": [
+      { "class": "Retail, Hospitality, and Consumer Services", "score": 14, "class_max": 30 }
+    ],
+    
+    "Royal Mail (delivery)": [
+      { "class": "Unrelated / Manual Labour / General Part-Time Jobs", "score": 10, "class_max": 30 }
+    ],
+    "Uber Eats (delivery)": [
+      { "class": "Unrelated / Manual Labour / General Part-Time Jobs", "score": 10, "class_max": 30 }
+    ]
+    }
+    
+    

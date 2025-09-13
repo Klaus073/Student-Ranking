@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { SearchSelect } from "@/components/ui/search-select";
+import mappings from "@/data/mappings.json";
 import { createClient } from "@/lib/supabase/client";
 import { UserProfile } from "@/lib/types";
 
@@ -48,7 +51,7 @@ export default function ProfilePage() {
   const [certs, setCerts] = useState<number>(0);
 
   // Internship state
-  const [newInternship, setNewInternship] = useState<{ tier: string; months: number; year: number } | null>(null);
+  const [newInternship, setNewInternship] = useState<{ company: string; job_class: string; start_month: string; end_month: string; current: boolean; employment_type: "full time" | "part time" | "" } | null>(null);
   const [editingInternshipId, setEditingInternshipId] = useState<string | null>(null);
   const [editingInternship, setEditingInternship] = useState<{ tier: string; months: number; year: number } | null>(null);
 
@@ -101,16 +104,9 @@ export default function ProfilePage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
       const yearNum = yearValue ? parseInt(yearValue) : null;
-      // Validate university requirement when year is 1–3
-      if (yearNum !== null && [1,2,3].includes(yearNum) && !universityValue) {
-        setError('Please select your university');
-        addToast('Please select your university', 'error');
-        setSaving(false);
-        return;
-      }
 
       const updates: any = { current_year: yearNum };
-      updates.university = (yearNum !== null && yearNum > 0) ? (universityValue || null) : null;
+      updates.university = universityValue || null;
 
       const { error: upErr } = await supabase
         .from('student_profiles')
@@ -150,6 +146,51 @@ export default function ProfilePage() {
     } finally { setSaving(false); }
   };
 
+  const allCompanies = Object.keys(mappings as Record<string, any>).sort((a,b)=>a.localeCompare(b));
+  const getClassesForCompany = (company: string): string[] => {
+    if (!company || !(mappings as any)[company]) return [];
+    const arr = ((mappings as any)[company] as Array<{ class: string }>);
+    return Array.from(new Set(arr.map(x=>x.class))).sort((a,b)=>a.localeCompare(b));
+  };
+
+  const formatClassLabel = (raw: string): string => {
+    const overrides: Record<string, string> = {
+      banking: "Banking",
+      markets: "Markets",
+      asset_management: "Asset Management",
+      private_markets: "Private Markets",
+      hedge_funds: "Hedge Funds",
+    };
+    if (overrides[raw]) return overrides[raw];
+    const replaced = raw.replace(/_/g, " ");
+    return replaced.replace(/\b\w+/g, (w) => w.charAt(0).toUpperCase() + w.slice(1));
+  };
+
+  const EMPLOYMENT_TYPES: { value: "full time" | "part time"; label: string }[] = [
+    { value: "full time", label: "Full time" },
+    { value: "part time", label: "Part time" },
+  ];
+
+  const computeMonthsAndYear = (startMonth: string, endMonth: string, isCurrent: boolean): { months: number; year: number } | null => {
+    if (!startMonth) return null;
+    const [sy, sm] = startMonth.split("-").map((x) => parseInt(x));
+    const start = new Date(sy, (sm || 1) - 1, 1);
+    const endDateRef = (() => {
+      if (isCurrent || !endMonth) return new Date();
+      const [ey, em] = endMonth.split("-").map((x) => parseInt(x));
+      return new Date(ey, (em || 1) - 1, 1);
+    })();
+    const years = endDateRef.getFullYear() - start.getFullYear();
+    const months = endDateRef.getMonth() - start.getMonth() + years * 12;
+    const totalMonths = Math.max(1, months + 1);
+    return { months: totalMonths, year: sy };
+  };
+
+  const getCalculatedMonths = (startMonth: string, endMonth: string, isCurrent: boolean): number | null => {
+    const comp = computeMonthsAndYear(startMonth, endMonth, isCurrent);
+    return comp ? comp.months : null;
+  };
+
   const createInternship = async () => {
     if (!newInternship) return;
     setSaving(true);
@@ -157,7 +198,14 @@ export default function ProfilePage() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
-      const payload = { user_id: user.id, tier: parseInt(newInternship.tier), months: newInternship.months, year: newInternship.year };
+      if (!newInternship.company) throw new Error('Please select a company');
+      if (!newInternship.job_class) throw new Error('Please select a class');
+      if (!newInternship.start_month) throw new Error('Please select a start month');
+      if (!newInternship.current && !newInternship.end_month) throw new Error('Provide end month or mark current');
+      if (!newInternship.employment_type) throw new Error('Please select employment type');
+      const comp = computeMonthsAndYear(newInternship.start_month, newInternship.end_month, newInternship.current);
+      if (!comp) throw new Error('Invalid dates');
+      const payload = { user_id: user.id, tier: 1, months: comp.months, year: comp.year };
       const { error: insErr } = await supabase.from('student_internships').insert(payload).single();
       if (insErr) throw insErr;
       setNewInternship(null);
@@ -472,7 +520,7 @@ export default function ProfilePage() {
           )}
 
           <div className="border-t pt-4">
-            <Button variant="outline" onClick={()=>setNewInternship({ tier: "", months: 1, year: 2024 })}>Add Internship</Button>
+            <Button variant="outline" onClick={()=>setNewInternship({ company: "", job_class: "", start_month: "", end_month: "", current: false, employment_type: "" })}>Add Internship</Button>
           </div>
         </CardContent>
       </Card>
@@ -577,20 +625,17 @@ export default function ProfilePage() {
               </label>
             ))}
           </div>
-          {(["1","2","3"].includes(yearValue)) && (
-            <div className="space-y-2 pt-2">
-              <label className="text-sm text-gray-300">University</label>
-              <Select value={universityValue} onValueChange={setUniversityValue}>
-                <SelectTrigger className="mt-1"><SelectValue placeholder="Select your university"/></SelectTrigger>
-                <SelectContent>
-                  {['Oxford','Cambridge','LSE','Imperial','Warwick','Non-Target'].map(u => (
-                    <SelectItem key={u} value={u}>{u}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="text-xs text-gray-400">Required for years 1–3</div>
-            </div>
-          )}
+          <div className="space-y-2 pt-2">
+            <label className="text-sm text-gray-300">University</label>
+            <Select value={universityValue} onValueChange={setUniversityValue}>
+              <SelectTrigger className="mt-1"><SelectValue placeholder="Select your university (optional)"/></SelectTrigger>
+              <SelectContent>
+                {['Oxford','Cambridge','LSE','Imperial','Warwick','Non-Target'].map(u => (
+                  <SelectItem key={u} value={u}>{u}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </Modal>
 
@@ -627,28 +672,57 @@ export default function ProfilePage() {
         open={!!newInternship}
         title="Add Internship"
         onClose={()=>setNewInternship(null)}
-        footer={<><Button variant="ghost" onClick={()=>setNewInternship(null)}>Cancel</Button><Button onClick={createInternship} disabled={saving || !newInternship?.tier}>Save</Button></>}
+        footer={<><Button variant="ghost" onClick={()=>setNewInternship(null)}>Cancel</Button><Button onClick={createInternship} disabled={saving || !newInternship?.company || !newInternship?.job_class || !newInternship?.start_month || (!newInternship?.current && !newInternship?.end_month) || !newInternship?.employment_type}>Save</Button></>}
       >
         {newInternship && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div>
-              <label className="text-sm text-gray-300">Tier</label>
-              <Select value={newInternship.tier} onValueChange={(v)=>setNewInternship(prev=>({...(prev as any), tier: v}))}>
-                <SelectTrigger className="mt-1"><SelectValue placeholder="Select"/></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">Tier 1</SelectItem>
-                  <SelectItem value="2">Tier 2</SelectItem>
-                  <SelectItem value="3">Tier 3</SelectItem>
-                </SelectContent>
-              </Select>
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm text-gray-300">Company</label>
+                <SearchSelect
+                  options={allCompanies}
+                  value={newInternship.company}
+                  onChange={(v)=>setNewInternship(prev=>({...(prev as any), company: v, job_class: ""}))}
+                  placeholder="Search company"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-gray-300">Class</label>
+                <Select value={newInternship.job_class} onValueChange={(v)=>setNewInternship(prev=>({...(prev as any), job_class: v}))} disabled={!newInternship.company}>
+                  <SelectTrigger className="mt-1"><SelectValue placeholder={newInternship.company?"Select class":"Select company first"}/></SelectTrigger>
+                  <SelectContent>
+                    {getClassesForCompany(newInternship.company).map(c => (<SelectItem key={c} value={c}>{formatClassLabel(c)}</SelectItem>))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div>
-              <label className="text-sm text-gray-300">Months</label>
-              <Input type="number" min={1} max={12} value={newInternship.months} onChange={(e)=>setNewInternship(prev=>({...(prev as any), months: Math.min(12, Math.max(1, parseInt(e.target.value)||1))}))} className="mt-1" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label className="text-sm text-gray-300">Start Date</label>
+                <Input type="month" className="mt-1" value={newInternship.start_month} onChange={(e)=>setNewInternship(prev=>({...(prev as any), start_month: e.target.value}))} />
+              </div>
+              <div>
+                <label className="text-sm text-gray-300">End Date</label>
+                <Input type="month" className="mt-1" value={newInternship.end_month} onChange={(e)=>setNewInternship(prev=>({...(prev as any), end_month: e.target.value}))} disabled={!!newInternship.current} />
+              </div>
+              <div>
+                <label className="text-sm text-gray-300">Employment Type</label>
+                <Select value={newInternship.employment_type} onValueChange={(v)=>setNewInternship(prev=>({...(prev as any), employment_type: v as any}))}>
+                  <SelectTrigger className="mt-1"><SelectValue placeholder="Select type"/></SelectTrigger>
+                  <SelectContent>
+                    {EMPLOYMENT_TYPES.map(opt => (
+                      <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div>
-              <label className="text-sm text-gray-300">Year</label>
-              <Input type="number" min={2020} max={2030} value={newInternship.year} onChange={(e)=>setNewInternship(prev=>({...(prev as any), year: Math.min(2030, Math.max(2020, parseInt(e.target.value)||2024))}))} className="mt-1" />
+            <div className="text-sm text-gray-300">
+              Calculated months: <span className="font-medium text-white/90">{getCalculatedMonths(newInternship.start_month, newInternship.end_month, newInternship.current) ?? '—'}</span>
+            </div>
+            <div className="flex items-center gap-2 pt-1">
+              <Checkbox id="current-internship" checked={!!newInternship.current} onCheckedChange={(v)=>setNewInternship(prev=>({...(prev as any), current: !!v}))} />
+              <label htmlFor="current-internship" className="text-sm text-gray-300">Currently working here</label>
             </div>
           </div>
         )}
