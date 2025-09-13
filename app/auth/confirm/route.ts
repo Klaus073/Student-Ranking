@@ -13,7 +13,7 @@ interface InternshipMetadata {
 
 interface SocietyRoleMetadata {
   role_title: string; // president | vice | committee | member
-  society_size: string; // small | medium | large
+  society_size: string; // small | medium | large | mega
   years_ago: number; // 0..4
 }
 
